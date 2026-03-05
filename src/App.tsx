@@ -8,6 +8,11 @@ import Register from "./pages/Register";
 import SelectSports from "./pages/SelectSports";
 import Feed from "./pages/Feed";
 import AthleteProfile from "./pages/AthleteProfile";
+import TalentStudio from "./pages/TalentStudio";
+import EventsMap from "./pages/EventsMap";
+import Chat from "./pages/Chat";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +29,11 @@ const App = () => (
           <Route path="/selecionar-esportes" element={<SelectSports />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/perfil/:id" element={<AthleteProfile />} />
+          <Route path="/talent-studio" element={<TalentStudio />} />
+          <Route path="/eventos" element={<EventsMap />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/termos" element={<Terms />} />
+          <Route path="/privacidade" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

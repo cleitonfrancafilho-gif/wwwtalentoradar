@@ -6,52 +6,57 @@
 
 @layer base {
   :root {
-    --background: 220 20% 6%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 95%;
 
-    --card: 220 18% 10%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 220 18% 10%;
+    --popover: 0 0% 8%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 145 80% 50%;
-    --primary-foreground: 220 20% 6%;
+    --primary: 110 100% 55%;
+    --primary-foreground: 0 0% 4%;
 
     --secondary: 25 95% 55%;
-    --secondary-foreground: 220 20% 6%;
+    --secondary-foreground: 0 0% 4%;
 
-    --muted: 220 15% 15%;
-    --muted-foreground: 220 10% 55%;
+    --cyan: 187 100% 50%;
+    --cyan-foreground: 0 0% 4%;
 
-    --accent: 145 80% 50%;
-    --accent-foreground: 220 20% 6%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 110 100% 55%;
+    --accent-foreground: 0 0% 4%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 95%;
 
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 145 80% 50%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 110 100% 55%;
 
     --radius: 0.75rem;
 
-    --neon-green: 145 80% 50%;
+    --neon-green: 110 100% 55%;
     --neon-orange: 25 95% 55%;
-    --neon-green-glow: 0 0 20px hsl(145, 80%, 50%, 0.4);
+    --neon-cyan: 187 100% 50%;
+    --neon-green-glow: 0 0 20px hsl(110, 100%, 55%, 0.4);
     --neon-orange-glow: 0 0 20px hsl(25, 95%, 55%, 0.4);
+    --neon-cyan-glow: 0 0 20px hsl(187, 100%, 50%, 0.3);
 
     --font-display: 'Rajdhani', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    --sidebar-background: 220 18% 8%;
+    --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 145 80% 50%;
-    --sidebar-primary-foreground: 220 20% 6%;
-    --sidebar-accent: 220 15% 15%;
+    --sidebar-primary: 110 100% 55%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 145 80% 50%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 110 100% 55%;
   }
 }
 
@@ -71,7 +76,7 @@
 @layer utilities {
   .text-gradient-neon {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(145, 80%, 50%), hsl(25, 95%, 55%));
+    background-image: linear-gradient(135deg, hsl(110, 100%, 55%), hsl(187, 100%, 50%));
   }
   .glow-green {
     box-shadow: var(--neon-green-glow);
@@ -79,11 +84,24 @@
   .glow-orange {
     box-shadow: var(--neon-orange-glow);
   }
+  .glow-cyan {
+    box-shadow: var(--neon-cyan-glow);
+  }
   .border-glow-green {
-    border-color: hsl(145, 80%, 50%);
+    border-color: hsl(110, 100%, 55%);
     box-shadow: var(--neon-green-glow);
   }
   .bg-gradient-radar {
-    background: radial-gradient(ellipse at center, hsl(145, 80%, 50%, 0.08) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, hsl(110, 100%, 55%, 0.06) 0%, transparent 70%);
+  }
+  .glass {
+    background: hsl(0 0% 100% / 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(0 0% 100% / 0.08);
+  }
+  .glass-card {
+    background: hsl(0 0% 100% / 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.06);
   }
 }

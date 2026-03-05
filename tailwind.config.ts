@@ -31,6 +31,10 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        cyan: {
+          DEFAULT: "hsl(var(--cyan))",
+          foreground: "hsl(var(--cyan-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -54,6 +58,7 @@ export default {
         neon: {
           green: "hsl(var(--neon-green))",
           orange: "hsl(var(--neon-orange))",
+          cyan: "hsl(var(--neon-cyan))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
