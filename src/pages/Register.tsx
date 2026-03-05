@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Radar, User, Search, Building2, ArrowLeft } from "lucide-react";
 
 const Register = () => {
@@ -12,46 +12,38 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border px-4 py-4">
+      <header className="border-b border-border/50 px-4 py-4 glass">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
             <Radar className="w-5 h-5 text-primary" />
-            <span className="font-display font-bold text-lg text-foreground">
-              Talent<span className="text-gradient-neon">Radar</span>
-            </span>
+            <span className="font-display font-bold text-lg text-foreground">Talent<span className="text-gradient-neon">Radar</span></span>
           </div>
         </div>
       </header>
 
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-lg animate-slide-up">
-          <h1 className="text-3xl font-display font-bold text-center mb-2 text-foreground">
-            Criar Conta
-          </h1>
-          <p className="text-muted-foreground text-center mb-8 text-sm">
-            Selecione seu perfil e preencha os dados
-          </p>
+          <h1 className="text-3xl font-display font-bold text-center mb-2 text-foreground">Criar Conta</h1>
+          <p className="text-muted-foreground text-center mb-8 text-sm">Selecione seu perfil e preencha os dados</p>
 
           <Tabs value={tab} onValueChange={setTab} className="w-full">
             <TabsList className="grid grid-cols-3 w-full bg-muted mb-6 h-12">
               <TabsTrigger value="atleta" className="flex items-center gap-1.5 font-display data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <User className="w-4 h-4" /> Atleta
               </TabsTrigger>
-              <TabsTrigger value="olheiro" className="flex items-center gap-1.5 font-display data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
+              <TabsTrigger value="olheiro" className="flex items-center gap-1.5 font-display data-[state=active]:bg-cyan data-[state=active]:text-cyan-foreground">
                 <Search className="w-4 h-4" /> Olheiro
               </TabsTrigger>
-              <TabsTrigger value="instituicao" className="flex items-center gap-1.5 font-display data-[state=active]:bg-neon-orange data-[state=active]:text-primary-foreground">
+              <TabsTrigger value="instituicao" className="flex items-center gap-1.5 font-display data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
                 <Building2 className="w-4 h-4" /> Instituição
               </TabsTrigger>
             </TabsList>
 
-            {/* Atleta */}
             <TabsContent value="atleta" className="space-y-4">
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+              <div className="glass-card rounded-xl p-6 space-y-4 border border-transparent">
                 <div>
                   <Label htmlFor="nome" className="text-foreground">Nome Completo</Label>
                   <Input id="nome" placeholder="Seu nome" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
@@ -75,11 +67,8 @@ const Register = () => {
                   <Input id="senha-atleta" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
 
-                {/* Vínculo Parental */}
-                <div className="border border-secondary/30 rounded-lg p-4 bg-secondary/5">
-                  <p className="text-sm font-display font-semibold text-secondary mb-3">
-                    ⚠ Menor de 18 anos? Preencha o vínculo parental:
-                  </p>
+                <div className="border border-secondary/30 rounded-lg p-4 glass-card">
+                  <p className="text-sm font-display font-semibold text-secondary mb-3">⚠ Menor de 18 anos? Preencha o vínculo parental:</p>
                   <div className="space-y-3">
                     <div>
                       <Label htmlFor="email-resp" className="text-foreground text-sm">E-mail do Responsável</Label>
@@ -92,15 +81,12 @@ const Register = () => {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => navigate("/selecionar-esportes")}>
-                  Criar Conta de Atleta
-                </Button>
+                <Button className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Atleta</Button>
               </div>
             </TabsContent>
 
-            {/* Olheiro */}
             <TabsContent value="olheiro" className="space-y-4">
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+              <div className="glass-card rounded-xl p-6 space-y-4 border border-transparent">
                 <div>
                   <Label htmlFor="nome-olh" className="text-foreground">Nome Completo</Label>
                   <Input id="nome-olh" placeholder="Seu nome" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
@@ -125,20 +111,17 @@ const Register = () => {
                   <Label htmlFor="senha-olh" className="text-foreground">Senha</Label>
                   <Input id="senha-olh" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
-                <div className="border border-primary/30 rounded-lg p-3 bg-primary/5">
-                  <p className="text-xs text-primary">
-                    🛡 Após o cadastro, envie seus documentos para receber o Selo de Verificado.
-                  </p>
+                <div className="border border-cyan/30 rounded-lg p-3 glass-card">
+                  <p className="text-xs text-cyan">🛡 Após o cadastro, envie seus documentos para receber o Selo de Verificado.</p>
                 </div>
-                <Button variant="secondary" className="w-full" onClick={() => navigate("/selecionar-esportes")}>
+                <Button className="w-full bg-cyan text-cyan-foreground hover:bg-cyan/90" onClick={() => navigate("/selecionar-esportes")}>
                   Criar Conta de Olheiro
                 </Button>
               </div>
             </TabsContent>
 
-            {/* Instituição */}
             <TabsContent value="instituicao" className="space-y-4">
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+              <div className="glass-card rounded-xl p-6 space-y-4 border border-transparent">
                 <div>
                   <Label htmlFor="razao" className="text-foreground">Razão Social</Label>
                   <Input id="razao" placeholder="Nome da Instituição" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
@@ -163,16 +146,18 @@ const Register = () => {
                   <Label htmlFor="senha-inst" className="text-foreground">Senha</Label>
                   <Input id="senha-inst" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
-                <Button variant="secondary" className="w-full" onClick={() => navigate("/selecionar-esportes")}>
-                  Criar Conta de Instituição
-                </Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Instituição</Button>
               </div>
             </TabsContent>
           </Tabs>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Já tem conta?{" "}
-            <button className="text-primary hover:underline font-semibold">Entrar</button>
+            Já tem conta? <button className="text-primary hover:underline font-semibold">Entrar</button>
+          </p>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Ao criar sua conta, você concorda com os{" "}
+            <Link to="/termos" className="text-cyan hover:underline">Termos de Uso</Link>{" "}e{" "}
+            <Link to="/privacidade" className="text-cyan hover:underline">Política de Privacidade</Link>.
           </p>
         </div>
       </main>
