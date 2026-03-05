@@ -1,0 +1,128 @@
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowLeft, Radar, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield,
+} from "lucide-react";
+
+const AthleteProfile = () => {
+  const navigate = useNavigate();
+
+  const stats = [
+    { label: "Altura", value: "1.78m", icon: Ruler },
+    { label: "Peso", value: "72kg", icon: Weight },
+    { label: "Posição", value: "Atacante", icon: Star },
+    { label: "Gols", value: "23", icon: Trophy },
+  ];
+
+  const achievements = [
+    "🏆 Artilheiro Copa Sub-17 SP — 2025",
+    "🥇 Seleção Paulista Sub-16 — 2024",
+    "⚽ MVP Torneio de Verão — 2024",
+  ];
+
+  const highlights = [
+    { title: "Gol de Cobertura vs Santos Sub-17", views: "1.2K", tags: ["#Futebol", "#Sub17", "#Gol"] },
+    { title: "Dribles e Assistências — Compilado 2025", views: "3.4K", tags: ["#Highlights", "#Atacante"] },
+    { title: "Hat-trick Copa Paulista", views: "2.1K", tags: ["#Futebol", "#Artilheiro"] },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pb-8">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <span className="font-display font-bold text-foreground">DVD Digital</span>
+          <Share2 className="w-5 h-5 text-muted-foreground" />
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-4 py-6 space-y-6 animate-slide-up">
+        {/* Profile header */}
+        <div className="flex items-start gap-4">
+          <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-3xl glow-green">
+            ⚽
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-display font-bold text-foreground">Lucas Silva</h1>
+              <Shield className="w-5 h-5 text-primary" />
+            </div>
+            <p className="text-sm text-muted-foreground">16 anos • Atacante • Futebol</p>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+              <MapPin className="w-3 h-3" /> São Paulo, SP
+            </div>
+            <div className="flex gap-2 mt-3">
+              <Button size="sm">
+                <MessageCircle className="w-4 h-4 mr-1" /> Contatar
+              </Button>
+              <Button variant="outline" size="sm">
+                Seguir
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-4 gap-3">
+          {stats.map((stat) => (
+            <div key={stat.label} className="bg-card border border-border rounded-xl p-3 text-center">
+              <stat.icon className="w-4 h-4 text-primary mx-auto mb-1" />
+              <p className="text-lg font-display font-bold text-foreground">{stat.value}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Achievements */}
+        <div>
+          <h2 className="font-display font-bold text-foreground mb-3">Conquistas</h2>
+          <div className="bg-card border border-border rounded-xl p-4 space-y-2">
+            {achievements.map((a, i) => (
+              <p key={i} className="text-sm text-foreground">{a}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Highlights */}
+        <div>
+          <h2 className="font-display font-bold text-foreground mb-3">Highlights</h2>
+          <div className="space-y-3">
+            {highlights.map((h, i) => (
+              <div key={i} className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-colors">
+                <div className="aspect-video bg-muted flex items-center justify-center relative">
+                  <Play className="w-10 h-10 text-primary opacity-70" />
+                  <span className="absolute bottom-2 right-2 text-xs text-muted-foreground bg-background/80 px-2 py-0.5 rounded">
+                    {h.views} views
+                  </span>
+                </div>
+                <div className="p-3">
+                  <h4 className="text-sm font-display font-bold text-foreground">{h.title}</h4>
+                  <div className="flex gap-1.5 mt-2">
+                    {h.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-[10px] bg-primary/15 text-primary border-0">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Safety notice */}
+        <div className="border border-secondary/30 rounded-xl p-4 bg-secondary/5">
+          <p className="text-xs text-secondary font-display text-center">
+            ⚠ Nunca marque encontros fora de Sedes Oficiais ou CTs. Comunique seus responsáveis.
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default AthleteProfile;
