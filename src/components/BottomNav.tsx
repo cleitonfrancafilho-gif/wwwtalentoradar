@@ -6,7 +6,7 @@ const navItems = [
   { icon: Compass, label: "Discovery", path: "/feed?tab=descoberta" },
   { icon: PlusCircle, label: "Studio", path: "/talent-studio" },
   { icon: MapPin, label: "News/Map", path: "/eventos" },
-  { icon: User, label: "Profile", path: "/perfil/1" },
+  { icon: User, label: "Profile", path: "/editar-perfil" },
 ];
 
 const BottomNav = () => {
