@@ -13,6 +13,7 @@ import EventsMap from "./pages/EventsMap";
 import Chat from "./pages/Chat";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import EditProfile from "./pages/EditProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/termos" element={<Terms />} />
           <Route path="/privacidade" element={<Privacy />} />
+          <Route path="/editar-perfil" element={<EditProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
