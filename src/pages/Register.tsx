@@ -3,12 +3,53 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useNavigate, Link } from "react-router-dom";
-import { Radar, User, Search, Building2, ArrowLeft } from "lucide-react";
+import { Radar, User, Search, Building2, ArrowLeft, Mail, ShieldCheck } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [tab, setTab] = useState("atleta");
+
+  // Guardian OTP state
+  const [guardianEmail, setGuardianEmail] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+
+  const handleSendOtp = () => {
+    if (!guardianEmail || !guardianEmail.includes("@")) {
+      toast({ title: "E-mail inválido", description: "Informe um e-mail válido do responsável.", variant: "destructive" });
+      return;
+    }
+    setSendingOtp(true);
+    // Simulate sending OTP
+    setTimeout(() => {
+      setSendingOtp(false);
+      setOtpSent(true);
+      toast({ title: "Código enviado!", description: `Um código de 6 dígitos foi enviado para ${guardianEmail}` });
+    }, 1500);
+  };
+
+  const handleVerifyOtp = (value: string) => {
+    setOtpValue(value);
+    if (value.length === 6) {
+      // Simulate verification (accept any 6-digit code for now)
+      setTimeout(() => {
+        setOtpVerified(true);
+        toast({ title: "✅ Verificado!", description: "E-mail do responsável confirmado com sucesso." });
+      }, 500);
+    }
+  };
+
+  const resetOtp = () => {
+    setOtpSent(false);
+    setOtpValue("");
+    setOtpVerified(false);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -67,17 +108,76 @@ const Register = () => {
                   <Input id="senha-atleta" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
 
-                <div className="border border-secondary/30 rounded-lg p-4 glass-card">
-                  <p className="text-sm font-display font-semibold text-secondary mb-3">⚠ Menor de 18 anos? Preencha o vínculo parental:</p>
-                  <div className="space-y-3">
-                    <div>
-                      <Label htmlFor="email-resp" className="text-foreground text-sm">E-mail do Responsável</Label>
-                      <Input id="email-resp" type="email" placeholder="responsavel@email.com" className="mt-1 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
+                {/* Guardian verification with OTP */}
+                <div className="border border-secondary/30 rounded-lg p-4 glass-card space-y-3">
+                  <p className="text-sm font-display font-semibold text-secondary flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" /> Menor de 18 anos? Vínculo parental obrigatório
+                  </p>
+
+                  <div>
+                    <Label htmlFor="email-resp" className="text-foreground text-sm">E-mail do Responsável</Label>
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        id="email-resp"
+                        type="email"
+                        placeholder="responsavel@email.com"
+                        value={guardianEmail}
+                        onChange={(e) => { setGuardianEmail(e.target.value); if (otpSent) resetOtp(); }}
+                        disabled={otpVerified}
+                        className="bg-muted border-border text-foreground placeholder:text-muted-foreground flex-1"
+                      />
+                      {!otpVerified && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={handleSendOtp}
+                          disabled={sendingOtp || !guardianEmail}
+                          className="whitespace-nowrap border-secondary/50 text-secondary hover:bg-secondary/10"
+                        >
+                          <Mail className="w-3.5 h-3.5 mr-1.5" />
+                          {sendingOtp ? "Enviando..." : otpSent ? "Reenviar" : "Enviar Código"}
+                        </Button>
+                      )}
                     </div>
-                    <div>
-                      <Label htmlFor="cpf-resp" className="text-foreground text-sm">CPF do Responsável</Label>
-                      <Input id="cpf-resp" placeholder="000.000.000-00" className="mt-1 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
+                  </div>
+
+                  {/* OTP Input */}
+                  {otpSent && !otpVerified && (
+                    <div className="space-y-2 animate-slide-up">
+                      <Label className="text-foreground text-sm">Código de Verificação (6 dígitos)</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Digite o código enviado para <span className="text-cyan font-semibold">{guardianEmail}</span>
+                      </p>
+                      <div className="flex justify-center py-2">
+                        <InputOTP maxLength={6} value={otpValue} onChange={handleVerifyOtp}>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                            <InputOTPSlot index={1} />
+                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={3} />
+                            <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
+                          </InputOTPGroup>
+                        </InputOTP>
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Não recebeu? <button onClick={handleSendOtp} className="text-primary hover:underline font-semibold">Reenviar código</button>
+                      </p>
                     </div>
+                  )}
+
+                  {/* Verified state */}
+                  {otpVerified && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/10 border border-primary/20 animate-slide-up">
+                      <ShieldCheck className="w-4 h-4 text-primary" />
+                      <span className="text-sm text-primary font-display font-semibold">E-mail do responsável verificado</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <Label htmlFor="cpf-resp" className="text-foreground text-sm">CPF do Responsável</Label>
+                    <Input id="cpf-resp" placeholder="000.000.000-00" className="mt-1 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                   </div>
                 </div>
 
