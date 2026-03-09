@@ -56,7 +56,15 @@ const AthleteProfile = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <span className="font-display font-bold text-foreground">DVD Digital</span>
-          <Share2 className="w-5 h-5 text-muted-foreground" />
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              import("sonner").then(({ toast }) => toast.success("Link copiado!"));
+            }}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Share2 className="w-5 h-5" />
+          </button>
         </div>
       </header>
 

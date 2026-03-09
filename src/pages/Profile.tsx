@@ -158,7 +158,15 @@ const Profile = () => {
             <Edit className="w-4 h-4 mr-2" />
             Editar perfil
           </Button>
-          <Button variant="secondary" className="bg-muted hover:bg-muted/80 text-foreground">
+          <Button
+            variant="secondary"
+            className="bg-muted hover:bg-muted/80 text-foreground"
+            onClick={() => {
+              const profileUrl = `${window.location.origin}/perfil/${user?.id || ""}`;
+              navigator.clipboard.writeText(profileUrl);
+              toast.success("Link do perfil copiado!");
+            }}
+          >
             <Share2 className="w-4 h-4" />
           </Button>
           <QRCodeModal athleteName={fullName} profileUrl={window.location.href} />
