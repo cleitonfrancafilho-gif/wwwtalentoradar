@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
-import { QRCodeModal } from "@/components/QRCodeModal";
+import QRCodeModal from "@/components/QRCodeModal";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Settings, Edit, Grid3X3, Bookmark, Heart, MapPin, Shield, Trophy,
