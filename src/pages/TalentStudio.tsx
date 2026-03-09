@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import BottomNav from "@/components/BottomNav";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import {
-  Radar, Upload, Scissors, Circle, Type, Timer, Play, ArrowLeft, Check,
+  Radar, Upload, Scissors, Circle, Type, Timer, Play, ArrowLeft, Check, Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,10 +20,68 @@ const tools = [
 
 const TalentStudio = () => {
   const navigate = useNavigate();
-  const [uploaded, setUploaded] = useState(false);
+  const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [trimRange, setTrimRange] = useState([10, 80]);
   const [slowMoSpeed, setSlowMoSpeed] = useState([50]);
+  const [uploading, setUploading] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 200 * 1024 * 1024) {
+      toast.error("Arquivo muito grande. Máximo 200MB.");
+      return;
+    }
+
+    if (!file.type.startsWith("video/")) {
+      toast.error("Selecione um arquivo de vídeo (MP4, MOV).");
+      return;
+    }
+
+    setVideoFile(file);
+    setVideoUrl(URL.createObjectURL(file));
+  };
+
+  const handlePublish = async () => {
+    if (!videoFile || !user) return;
+
+    setPublishing(true);
+    try {
+      const fileExt = videoFile.name.split(".").pop();
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("videos")
+        .upload(filePath, videoFile, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("videos")
+        .getPublicUrl(filePath);
+
+      toast.success("Vídeo publicado com sucesso!");
+      setVideoFile(null);
+      setVideoUrl(null);
+      setActiveTool(null);
+      navigate("/perfil");
+    } catch (err: any) {
+      toast.error("Erro ao publicar: " + (err.message || "Tente novamente."));
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const uploaded = !!videoFile;
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -33,16 +94,25 @@ const TalentStudio = () => {
             <Radar className="w-5 h-5 text-cyan" />
             <span className="font-display font-bold text-lg text-foreground">Talent Studio</span>
           </div>
-          <Button size="sm" disabled={!uploaded}>
-            <Check className="w-4 h-4 mr-1" /> Publicar
+          <Button size="sm" disabled={!uploaded || publishing} onClick={handlePublish}>
+            {publishing ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
+            {publishing ? "Enviando..." : "Publicar"}
           </Button>
         </div>
       </header>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {!uploaded ? (
           <div
-            onClick={() => setUploaded(true)}
+            onClick={() => fileInputRef.current?.click()}
             className="glass-card rounded-2xl aspect-video flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/30 transition-colors border border-dashed border-border"
           >
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -57,21 +127,31 @@ const TalentStudio = () => {
           <>
             {/* Video preview */}
             <div className="relative glass-card rounded-2xl aspect-video overflow-hidden">
-              <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                <Play className="w-14 h-14 text-primary opacity-60" />
-              </div>
-              {/* Overlay preview */}
+              {videoUrl ? (
+                <video src={videoUrl} controls className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 bg-muted flex items-center justify-center">
+                  <Play className="w-14 h-14 text-primary opacity-60" />
+                </div>
+              )}
               {activeTool === "overlay" && (
-                <div className="absolute bottom-4 left-4 glass rounded-lg px-3 py-2 text-xs space-y-0.5">
+                <div className="absolute bottom-4 left-4 glass rounded-lg px-3 py-2 text-xs space-y-0.5 pointer-events-none">
                   <p className="font-display font-bold text-foreground">Lucas Silva</p>
                   <p className="text-muted-foreground">16 anos • Atacante • São Paulo</p>
                 </div>
               )}
-              {/* Spotlight preview */}
               {activeTool === "spotlight" && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-cyan animate-pulse-neon" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-cyan animate-pulse-neon pointer-events-none" />
               )}
             </div>
+
+            {/* Change video */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-muted-foreground hover:text-primary transition-colors text-center w-full"
+            >
+              Trocar vídeo
+            </button>
 
             {/* Tools */}
             <div className="flex gap-2 justify-center">
