@@ -18,6 +18,10 @@ import EditProfile from "./pages/EditProfile";
 import FaceCapture from "./pages/FaceCapture";
 import HelpCenter from "./pages/HelpCenter";
 import AdminDashboard from "./pages/AdminDashboard";
+import Settings from "./pages/Settings";
+import TalentPro from "./pages/TalentPro";
+import Notifications from "./pages/Notifications";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
