@@ -11,8 +11,9 @@ import {
 import BottomNav from "@/components/BottomNav";
 import {
   ArrowLeft, Radar, Shield, Send, Eye, EyeOff, Lock, MoreVertical,
-  Pin, Trash2, BellOff, Video, Phone, Camera, FileText, MapPin, Check, X, Paperclip,
+  Pin, Trash2, BellOff, Video, Phone, Camera, FileText, MapPin, Check, X, Paperclip, Mic,
 } from "lucide-react";
+import VoiceRecorder from "@/components/chat/VoiceRecorder";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
