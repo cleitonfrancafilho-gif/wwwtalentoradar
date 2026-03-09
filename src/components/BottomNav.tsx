@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, MessageCircle, PlusCircle, MapPin, User } from "lucide-react";
+import { Home, MessageCircle, PlusCircle, User, Settings } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/feed" },
   { icon: MessageCircle, label: "Messages", path: "/chat" },
   { icon: PlusCircle, label: "Studio", path: "/talent-studio" },
-  { icon: MapPin, label: "News/Map", path: "/eventos" },
   { icon: User, label: "Profile", path: "/perfil" },
+  { icon: Settings, label: "Config", path: "/configuracoes" },
 ];
 
 const BottomNav = () => {
