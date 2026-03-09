@@ -48,6 +48,10 @@ const App = () => (
           <Route path="/captura-facial" element={<FaceCapture />} />
           <Route path="/central-ajuda" element={<HelpCenter />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/configuracoes" element={<Settings />} />
+          <Route path="/assinatura" element={<TalentPro />} />
+          <Route path="/notificacoes" element={<Notifications />} />
+          <Route path="/sobre" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
