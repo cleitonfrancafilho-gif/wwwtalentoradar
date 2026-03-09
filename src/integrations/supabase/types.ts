@@ -14,16 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          address: string | null
+          anonymous_mode: boolean | null
+          area_of_operation: string | null
+          avatar_url: string | null
+          bio: string | null
+          birth_date: string | null
+          cnpj: string | null
+          cpf: string | null
+          created_at: string
+          dominant_foot: string | null
+          email: string
+          full_name: string
+          height_cm: number | null
+          id: string
+          legal_representative: string | null
+          phone: string | null
+          position: string | null
+          professional_link: string | null
+          profile_type: Database["public"]["Enums"]["profile_type"]
+          registration_number: string | null
+          sport: string | null
+          updated_at: string
+          weight_kg: number | null
+        }
+        Insert: {
+          address?: string | null
+          anonymous_mode?: boolean | null
+          area_of_operation?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          cnpj?: string | null
+          cpf?: string | null
+          created_at?: string
+          dominant_foot?: string | null
+          email?: string
+          full_name?: string
+          height_cm?: number | null
+          id: string
+          legal_representative?: string | null
+          phone?: string | null
+          position?: string | null
+          professional_link?: string | null
+          profile_type?: Database["public"]["Enums"]["profile_type"]
+          registration_number?: string | null
+          sport?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          address?: string | null
+          anonymous_mode?: boolean | null
+          area_of_operation?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          cnpj?: string | null
+          cpf?: string | null
+          created_at?: string
+          dominant_foot?: string | null
+          email?: string
+          full_name?: string
+          height_cm?: number | null
+          id?: string
+          legal_representative?: string | null
+          phone?: string | null
+          position?: string | null
+          professional_link?: string | null
+          profile_type?: Database["public"]["Enums"]["profile_type"]
+          registration_number?: string | null
+          sport?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          plan: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          plan?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          plan?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_pro_access: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      profile_type: "atleta" | "olheiro" | "instituicao"
+      subscription_status:
+        | "active"
+        | "canceled"
+        | "past_due"
+        | "trialing"
+        | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +304,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      profile_type: ["atleta", "olheiro", "instituicao"],
+      subscription_status: [
+        "active",
+        "canceled",
+        "past_due",
+        "trialing",
+        "inactive",
+      ],
+    },
   },
 } as const
