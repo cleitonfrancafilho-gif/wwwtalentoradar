@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate, Link } from "react-router-dom";
-import { Radar, ArrowLeft, Mail, Smartphone, ScanFace, KeyRound } from "lucide-react";
+import { Radar, ArrowLeft, Mail, Smartphone, ScanFace, KeyRound, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type RecoveryMethod = "email" | "sms" | "facial" | null;
 
@@ -13,24 +14,34 @@ const Login = () => {
   const { toast } = useToast();
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showRecovery, setShowRecovery] = useState(false);
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(null);
   const [recoveryInput, setRecoveryInput] = useState("");
   const [recoverySent, setRecoverySent] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!loginId || !password) {
-      toast({ title: "Campos obrigatórios", description: "Preencha e-mail/CPF e senha.", variant: "destructive" });
+      toast({ title: "Campos obrigatórios", description: "Preencha e-mail e senha.", variant: "destructive" });
       return;
     }
-    // Simulate login
-    toast({ title: "Entrando...", description: "Verificando credenciais..." });
-    setTimeout(() => {
-      navigate("/feed");
-    }, 1000);
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginId,
+      password,
+    });
+    setLoading(false);
+
+    if (error) {
+      toast({ title: "Erro ao entrar", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    toast({ title: "Bem-vindo!", description: "Login realizado com sucesso." });
+    navigate("/feed");
   };
 
-  const handleRecovery = () => {
+  const handleRecovery = async () => {
     if (recoveryMethod === "facial") {
       navigate("/captura-facial");
       return;
@@ -38,6 +49,15 @@ const Login = () => {
     if (!recoveryInput) {
       toast({ title: "Campo obrigatório", description: `Informe seu ${recoveryMethod === "email" ? "e-mail" : "telefone"}.`, variant: "destructive" });
       return;
+    }
+    if (recoveryMethod === "email") {
+      const { error } = await supabase.auth.resetPasswordForEmail(recoveryInput, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (error) {
+        toast({ title: "Erro", description: error.message, variant: "destructive" });
+        return;
+      }
     }
     setRecoverySent(true);
     toast({ title: "Enviado!", description: `Instruções de recuperação enviadas via ${recoveryMethod === "email" ? "e-mail" : "SMS"}.` });
@@ -62,11 +82,7 @@ const Login = () => {
               <div className="space-y-4">
                 <h1 className="text-2xl font-display font-bold text-center text-foreground mb-2">Como deseja recuperar?</h1>
                 <p className="text-muted-foreground text-center text-sm mb-6">Escolha um método de recuperação de senha</p>
-
-                <button
-                  onClick={() => setRecoveryMethod("email")}
-                  className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-primary/40 transition-all flex items-center gap-4 group"
-                >
+                <button onClick={() => setRecoveryMethod("email")} className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-primary/40 transition-all flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Mail className="w-6 h-6 text-primary" />
                   </div>
@@ -75,11 +91,7 @@ const Login = () => {
                     <p className="text-sm text-muted-foreground">Receba um link de recuperação no seu e-mail</p>
                   </div>
                 </button>
-
-                <button
-                  onClick={() => setRecoveryMethod("sms")}
-                  className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-secondary/40 transition-all flex items-center gap-4 group"
-                >
+                <button onClick={() => setRecoveryMethod("sms")} className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-secondary/40 transition-all flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
                     <Smartphone className="w-6 h-6 text-secondary" />
                   </div>
@@ -88,11 +100,7 @@ const Login = () => {
                     <p className="text-sm text-muted-foreground">Receba um código por mensagem de texto</p>
                   </div>
                 </button>
-
-                <button
-                  onClick={() => setRecoveryMethod("facial")}
-                  className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-cyan/40 transition-all flex items-center gap-4 group"
-                >
+                <button onClick={() => setRecoveryMethod("facial")} className="w-full glass-card rounded-xl p-5 border border-transparent hover:border-cyan/40 transition-all flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-lg bg-cyan/10 flex items-center justify-center group-hover:bg-cyan/20 transition-colors">
                     <ScanFace className="w-6 h-6 text-cyan" />
                   </div>
@@ -165,13 +173,15 @@ const Login = () => {
 
           <div className="glass-card rounded-xl p-6 space-y-4 border border-transparent">
             <div>
-              <Label htmlFor="login-id" className="text-foreground">E-mail ou CPF</Label>
+              <Label htmlFor="login-id" className="text-foreground">E-mail</Label>
               <Input
                 id="login-id"
-                placeholder="seu@email.com ou 000.000.000-00"
+                type="email"
+                placeholder="seu@email.com"
                 value={loginId}
                 onChange={(e) => setLoginId(e.target.value)}
                 className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground"
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
             </div>
             <div>
@@ -183,9 +193,13 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground"
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
             </div>
-            <Button className="w-full" onClick={handleLogin}>Entrar</Button>
+            <Button className="w-full" onClick={handleLogin} disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {loading ? "Entrando..." : "Entrar"}
+            </Button>
 
             <button
               onClick={() => setShowRecovery(true)}
