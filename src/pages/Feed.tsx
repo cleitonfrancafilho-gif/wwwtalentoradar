@@ -141,7 +141,10 @@ const Feed = () => {
               Talent<span className="text-gradient-neon">Radar</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/live")} className="relative">
+              <Radio className="w-5 h-5 text-red-500" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(!searchOpen)}>
               {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
             </Button>
