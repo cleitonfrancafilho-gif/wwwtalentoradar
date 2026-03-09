@@ -5,7 +5,8 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root,
+  .dark {
     --background: 0 0% 4%;
     --foreground: 0 0% 95%;
 
@@ -58,6 +59,55 @@
     --sidebar-border: 0 0% 15%;
     --sidebar-ring: 110 100% 55%;
   }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 110 80% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 85% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --cyan: 187 80% 42%;
+    --cyan-foreground: 0 0% 100%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 110 80% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 110 80% 40%;
+
+    --neon-green: 110 80% 40%;
+    --neon-orange: 25 85% 50%;
+    --neon-cyan: 187 80% 42%;
+    --neon-green-glow: 0 0 12px hsl(110, 80%, 40%, 0.25);
+    --neon-orange-glow: 0 0 12px hsl(25, 85%, 50%, 0.25);
+    --neon-cyan-glow: 0 0 12px hsl(187, 80%, 42%, 0.2);
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 110 80% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 110 80% 40%;
+  }
 }
 
 @layer base {
@@ -76,7 +126,7 @@
 @layer utilities {
   .text-gradient-neon {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(110, 100%, 55%), hsl(187, 100%, 50%));
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--cyan)));
   }
   .glow-green {
     box-shadow: var(--neon-green-glow);
@@ -88,20 +138,20 @@
     box-shadow: var(--neon-cyan-glow);
   }
   .border-glow-green {
-    border-color: hsl(110, 100%, 55%);
+    border-color: hsl(var(--primary));
     box-shadow: var(--neon-green-glow);
   }
   .bg-gradient-radar {
-    background: radial-gradient(ellipse at center, hsl(110, 100%, 55%, 0.06) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.06) 0%, transparent 70%);
   }
   .glass {
-    background: hsl(0 0% 100% / 0.05);
+    background: hsl(var(--card) / 0.8);
     backdrop-filter: blur(16px);
-    border: 1px solid hsl(0 0% 100% / 0.08);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
   .glass-card {
-    background: hsl(0 0% 100% / 0.04);
+    background: hsl(var(--card) / 0.6);
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(0 0% 100% / 0.06);
+    border: 1px solid hsl(var(--border) / 0.3);
   }
 }

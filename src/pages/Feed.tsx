@@ -378,7 +378,7 @@ const Feed = () => {
                       <p className="text-xs text-primary mt-1 flex items-center gap-1">
                         <MapPin className="w-3 h-3" /> {event.distance} de você
                       </p>
-                      <Button size="sm" className="mt-3">Tenho Interesse</Button>
+                      <Button size="sm" className="mt-3" onClick={() => navigate("/eventos")}>Tenho Interesse</Button>
                     </div>
                   ))
                 )}
