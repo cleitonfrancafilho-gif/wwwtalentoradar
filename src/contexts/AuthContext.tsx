@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [hasPro, setHasPro] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [adminClaimAttempted, setAdminClaimAttempted] = useState(false);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -42,6 +43,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .single();
     setProfile(data);
     return data;
+  };
+
+  const tryClaimAdmin = async (u: User) => {
+    // One-time bootstrap: if this account is the configured admin email, claim the admin role.
+    if (adminClaimAttempted) return;
+
+    const adminEmail = "admradar@gmail.com";
+    const userEmail = (u.email ?? "").toLowerCase();
+
+    if (userEmail !== adminEmail) return;
+
+    setAdminClaimAttempted(true);
+
+    try {
+      await supabase.functions.invoke("claim-admin");
+    } catch {
+      // ignore; role check below will still run
+    }
   };
 
   const checkRoles = async (userId: string) => {
@@ -82,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           // Use setTimeout to avoid Supabase client deadlock
           setTimeout(async () => {
+            await tryClaimAdmin(session.user);
             await fetchProfile(session.user.id);
             await checkRoles(session.user.id);
             setLoading(false);
@@ -90,6 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setProfile(null);
           setIsAdmin(false);
           setHasPro(false);
+          setAdminClaimAttempted(false);
           setLoading(false);
         }
       }
@@ -99,8 +120,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id).then(() => {
-          checkRoles(session.user.id).then(() => setLoading(false));
+        tryClaimAdmin(session.user).then(() => {
+          fetchProfile(session.user.id).then(() => {
+            checkRoles(session.user.id).then(() => setLoading(false));
+          });
         });
       } else {
         setLoading(false);

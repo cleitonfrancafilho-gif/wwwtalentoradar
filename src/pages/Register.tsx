@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Radar, User, Search, Building2, ArrowLeft, Mail, ShieldCheck, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -62,13 +63,31 @@ const Register = () => {
     if (error) { setLoading(false); toast({ title: "Erro no cadastro", description: error.message, variant: "destructive" }); return; }
 
     if (data.user) {
-      const profileUpdate: Record<string, string | null> = {
-        id: data.user.id, email, full_name: fullName,
-        cpf: cpf || null, birth_date: birthDate || null,
-        ...(profileType === "olheiro" ? { professional_link: professionalLink || null, registration_number: registrationNumber || null, area_of_operation: areaOfOperation || null } : {}),
-        ...(profileType === "instituicao" ? { cnpj: cnpj || null, address: address || null, legal_representative: legalRepresentative || null } : {}),
+      const profileRow: TablesInsert<"profiles"> = {
+        id: data.user.id,
+        email,
+        full_name: fullName,
+        profile_type: profileType,
+        cpf: cpf || null,
+        birth_date: birthDate || null,
+
+        // Olheiro
+        professional_link: profileType === "olheiro" ? professionalLink || null : null,
+        registration_number: profileType === "olheiro" ? registrationNumber || null : null,
+        area_of_operation: profileType === "olheiro" ? areaOfOperation || null : null,
+
+        // Instituição
+        cnpj: profileType === "instituicao" ? cnpj || null : null,
+        address: profileType === "instituicao" ? address || null : null,
+        legal_representative: profileType === "instituicao" ? legalRepresentative || null : null,
       };
-      await supabase.from("profiles").upsert({ ...profileUpdate, profile_type: profileType });
+
+      const { error: profileError } = await supabase.from("profiles").upsert(profileRow);
+      if (profileError) {
+        setLoading(false);
+        toast({ title: "Erro ao salvar perfil", description: profileError.message, variant: "destructive" });
+        return;
+      }
     }
     setLoading(false);
     toast({ title: "Conta criada!", description: "Faça login para acessar." });
