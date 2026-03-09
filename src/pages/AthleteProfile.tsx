@@ -1,20 +1,39 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import QRCodeModal from "@/components/QRCodeModal";
 import {
-  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame,
+  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame, UserPlus, UserCheck,
 } from "lucide-react";
+
+const formatNumber = (n: number) => {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
+  return n.toString();
+};
 
 const AthleteProfile = () => {
   const navigate = useNavigate();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(1283);
+
+  const toggleFollow = () => {
+    setIsFollowing(prev => !prev);
+    setFollowerCount(prev => isFollowing ? prev - 1 : prev + 1);
+  };
 
   const stats = [
     { label: "Altura", value: "1.78m", icon: Ruler },
     { label: "Peso", value: "72kg", icon: Weight },
     { label: "Posição", value: "Atacante", icon: Star },
     { label: "Gols", value: "23", icon: Trophy },
+  ];
+
+  const socialStats = [
+    { label: "Posts", value: 24 },
+    { label: "Seguidores", value: followerCount },
+    { label: "Seguindo", value: 89 },
   ];
 
   const achievements = [
@@ -59,15 +78,38 @@ const AthleteProfile = () => {
               <span className="text-xs font-display font-bold text-primary">Score: 95</span>
               <Badge className="bg-primary/15 text-primary border-0 text-[9px]">Top Ativo</Badge>
             </div>
-            <div className="flex gap-2 mt-3">
-              <Button size="sm"><MessageCircle className="w-4 h-4 mr-1" /> Contatar</Button>
-              <Button variant="outline" size="sm">Seguir</Button>
-              <QRCodeModal athleteName="Lucas Silva" profileUrl={window.location.href} />
-            </div>
           </div>
         </div>
 
-        {/* Stats */}
+        {/* Social stats */}
+        <div className="grid grid-cols-3 gap-3">
+          {socialStats.map((s) => (
+            <div key={s.label} className="glass-card rounded-xl p-3 text-center border border-transparent">
+              <p className="text-xl font-display font-bold text-foreground">{formatNumber(s.value)}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-2">
+          <Button size="sm" className="flex-1"><MessageCircle className="w-4 h-4 mr-1" /> Contatar</Button>
+          <Button
+            variant={isFollowing ? "default" : "outline"}
+            size="sm"
+            className="flex-1"
+            onClick={toggleFollow}
+          >
+            {isFollowing ? (
+              <><UserCheck className="w-4 h-4 mr-1" /> Seguindo</>
+            ) : (
+              <><UserPlus className="w-4 h-4 mr-1" /> Seguir</>
+            )}
+          </Button>
+          <QRCodeModal athleteName="Lucas Silva" profileUrl={window.location.href} />
+        </div>
+
+        {/* Physical Stats */}
         <div className="grid grid-cols-4 gap-3">
           {stats.map((stat) => (
             <div key={stat.label} className="glass-card rounded-xl p-3 text-center border border-transparent">
