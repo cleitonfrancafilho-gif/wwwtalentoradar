@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
+import StoriesBar from "@/components/stories/StoriesBar";
 import LastCallBanner from "@/components/LastCallBanner";
 import SkeletonCard from "@/components/SkeletonCard";
 import {
