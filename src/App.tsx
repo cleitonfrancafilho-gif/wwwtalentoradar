@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import SelectSports from "./pages/SelectSports";
 import Feed from "./pages/Feed";
 import AthleteProfile from "./pages/AthleteProfile";
+import Profile from "./pages/Profile";
 import TalentStudio from "./pages/TalentStudio";
 import EventsMap from "./pages/EventsMap";
 import Chat from "./pages/Chat";
