@@ -181,7 +181,7 @@ const Register = () => {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Atleta</Button>
+                <Button className="w-full" onClick={() => navigate("/captura-facial")}>Criar Conta de Atleta</Button>
               </div>
             </TabsContent>
 
