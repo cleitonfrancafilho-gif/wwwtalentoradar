@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SelectSports from "./pages/SelectSports";
 import Feed from "./pages/Feed";
