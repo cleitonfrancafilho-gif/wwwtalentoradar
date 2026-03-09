@@ -6,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import QRCodeModal from "@/components/QRCodeModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import {
   Settings, Edit, Grid3X3, Bookmark, Heart, MapPin, Shield, Trophy,
-  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified
+  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2
 } from "lucide-react";
 
 // Mock posts data
