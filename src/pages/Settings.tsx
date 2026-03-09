@@ -4,27 +4,35 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import BottomNav from "@/components/BottomNav";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/hooks/useTheme";
 import {
-  ArrowLeft, Bell, Globe, Moon, Shield, Lock, Trash2, LogOut, ChevronRight,
+  ArrowLeft, Bell, Globe, Moon, Sun, Shield, Lock, Trash2, LogOut, ChevronRight,
   Crown, HelpCircle, FileText, Info, Smartphone,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
   const [locationAccess, setLocationAccess] = useState(true);
   const [biometricLogin, setBiometricLogin] = useState(false);
+
+  const isDark = theme === "dark";
 
   const settingsSections = [
     {
       title: "Conta",
       items: [
         { icon: Crown, label: "Talent Pro", desc: "Gerencie sua assinatura", action: () => navigate("/assinatura"), badge: "PRO", badgeColor: "bg-secondary/20 text-secondary" },
-        { icon: Lock, label: "Alterar Senha", desc: "Atualize sua senha de acesso", action: () => {} },
+        { icon: Lock, label: "Alterar Senha", desc: "Atualize sua senha de acesso", action: () => toast.info("Funcionalidade disponível em breve") },
         { icon: Shield, label: "Privacidade", desc: "Controle quem vê seu perfil", action: () => navigate("/privacidade") },
-        { icon: Smartphone, label: "Sessões Ativas", desc: "Gerencie dispositivos conectados", action: () => {} },
+        { icon: Smartphone, label: "Sessões Ativas", desc: "Gerencie dispositivos conectados", action: () => toast.info("Funcionalidade disponível em breve") },
       ],
     },
     {
@@ -35,10 +43,25 @@ const Settings = () => {
       ],
     },
     {
+      title: "Aparência",
+      items: [
+        {
+          icon: isDark ? Moon : Sun,
+          label: "Tema",
+          desc: isDark ? "Modo Escuro ativo" : "Modo Claro ativo",
+          toggle: true,
+          value: isDark,
+          onChange: (val: boolean) => {
+            setTheme(val ? "dark" : "light");
+            toast.success(val ? "Modo escuro ativado" : "Modo claro ativado");
+          },
+        },
+      ],
+    },
+    {
       title: "Preferências",
       items: [
-        { icon: Moon, label: "Modo Escuro", desc: "Tema do aplicativo", toggle: true, value: darkMode, onChange: setDarkMode },
-        { icon: Globe, label: "Idioma", desc: "Português (BR)", action: () => {} },
+        { icon: Globe, label: "Idioma", desc: "Português (BR)", action: () => toast.info("Funcionalidade disponível em breve") },
         { icon: Globe, label: "Localização", desc: "Acesso à geolocalização", toggle: true, value: locationAccess, onChange: setLocationAccess },
         { icon: Shield, label: "Login Biométrico", desc: "Use impressão digital ou rosto", toggle: true, value: biometricLogin, onChange: setBiometricLogin },
       ],
@@ -110,21 +133,56 @@ const Settings = () => {
             Zona de Risco
           </h2>
           <div className="glass-card rounded-xl overflow-hidden divide-y divide-border/30">
-            <button className="w-full flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors">
-              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center">
-                <LogOut className="w-4.5 h-4.5 text-destructive" />
-              </div>
-              <p className="text-sm font-medium text-destructive">Sair da Conta</p>
-            </button>
-            <button className="w-full flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors">
-              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center">
-                <Trash2 className="w-4.5 h-4.5 text-destructive" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-destructive">Excluir Conta</p>
-                <p className="text-xs text-muted-foreground">Ação irreversível</p>
-              </div>
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="w-full flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors">
+                  <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center">
+                    <LogOut className="w-4.5 h-4.5 text-destructive" />
+                  </div>
+                  <p className="text-sm font-medium text-destructive">Sair da Conta</p>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Sair da Conta</AlertDialogTitle>
+                  <AlertDialogDescription>Tem certeza que deseja sair da sua conta?</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => { toast.success("Você saiu da conta"); navigate("/"); }}>
+                    Sair
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="w-full flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors">
+                  <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center">
+                    <Trash2 className="w-4.5 h-4.5 text-destructive" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-destructive">Excluir Conta</p>
+                    <p className="text-xs text-muted-foreground">Ação irreversível</p>
+                  </div>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Excluir Conta</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação é irreversível. Todos os seus dados, vídeos e conexões serão permanentemente excluídos.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { toast.success("Conta excluída"); navigate("/"); }}>
+                    Excluir Permanentemente
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 
