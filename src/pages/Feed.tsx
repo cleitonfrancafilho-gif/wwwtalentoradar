@@ -169,6 +169,9 @@ const Feed = () => {
         )}
       </header>
 
+      {/* Stories */}
+      <StoriesBar className="border-b border-border/30" />
+
       {/* Sport filter chips */}
       <div className="sticky top-[57px] z-40 glass border-b border-border/30">
         <div className="max-w-2xl mx-auto px-4 py-2.5 overflow-x-auto scrollbar-hide">

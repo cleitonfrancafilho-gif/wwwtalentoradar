@@ -55,6 +55,7 @@ const App = () => (
             <Route path="/talent-studio" element={<RequireAuth><TalentStudio /></RequireAuth>} />
             <Route path="/eventos" element={<RequireAuth><EventsMap /></RequireAuth>} />
             <Route path="/chat" element={<RequirePro><Chat /></RequirePro>} />
+            <Route path="/live" element={<RequireAuth><Live /></RequireAuth>} />
             <Route path="/editar-perfil" element={<RequireAuth><EditProfile /></RequireAuth>} />
             <Route path="/captura-facial" element={<RequireAuth><FaceCapture /></RequireAuth>} />
             <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
