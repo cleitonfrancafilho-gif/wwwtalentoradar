@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SelectSports from "./pages/SelectSports";
 import Feed from "./pages/Feed";
@@ -16,6 +17,7 @@ import Privacy from "./pages/Privacy";
 import EditProfile from "./pages/EditProfile";
 import FaceCapture from "./pages/FaceCapture";
 import HelpCenter from "./pages/HelpCenter";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Register />} />
           <Route path="/selecionar-esportes" element={<SelectSports />} />
           <Route path="/feed" element={<Feed />} />
@@ -40,6 +43,7 @@ const App = () => (
           <Route path="/editar-perfil" element={<EditProfile />} />
           <Route path="/captura-facial" element={<FaceCapture />} />
           <Route path="/central-ajuda" element={<HelpCenter />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

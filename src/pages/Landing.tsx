@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
-import { Radar, Users, Shield, MapPin } from "lucide-react";
+import { Radar, Users, Shield, MapPin, LogIn, UserPlus } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Landing = () => {
@@ -31,8 +31,14 @@ const Landing = () => {
             Onde o talento encontra a oportunidade
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" onClick={() => navigate("/cadastro")}>Criar Conta Grátis</Button>
-            <Button variant="hero-outline" onClick={() => navigate("/feed")}>Explorar Talentos</Button>
+            <Button variant="hero" onClick={() => navigate("/cadastro")}>
+              <UserPlus className="w-5 h-5 mr-2" />
+              Criar uma Conta
+            </Button>
+            <Button variant="hero-outline" onClick={() => navigate("/login")}>
+              <LogIn className="w-5 h-5 mr-2" />
+              Já Tenho uma Conta
+            </Button>
           </div>
         </div>
       </section>
