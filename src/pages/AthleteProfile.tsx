@@ -93,7 +93,9 @@ const AthleteProfile = () => {
 
         {/* Action buttons */}
         <div className="flex gap-2">
-          <Button size="sm" className="flex-1"><MessageCircle className="w-4 h-4 mr-1" /> Contatar</Button>
+          <Button size="sm" className="flex-1" onClick={() => navigate("/chat")}>
+            <MessageCircle className="w-4 h-4 mr-1" /> Contatar
+          </Button>
           <Button
             variant={isFollowing ? "default" : "outline"}
             size="sm"
