@@ -144,7 +144,7 @@ const Feed = () => {
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(!searchOpen)}>
               {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
             </Button>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/notificacoes")}>
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-destructive" />
             </Button>
