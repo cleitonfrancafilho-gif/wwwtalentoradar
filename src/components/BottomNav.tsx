@@ -1,9 +1,9 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Compass, PlusCircle, MapPin, Settings } from "lucide-react";
+import { Home, MessageCircle, PlusCircle, MapPin, Settings } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/feed" },
-  { icon: Compass, label: "Discovery", path: "/feed?tab=descoberta" },
+  { icon: MessageCircle, label: "Messages", path: "/chat" },
   { icon: PlusCircle, label: "Studio", path: "/talent-studio" },
   { icon: MapPin, label: "News/Map", path: "/eventos" },
   { icon: Settings, label: "Config", path: "/configuracoes" },
