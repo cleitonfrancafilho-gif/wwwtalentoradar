@@ -246,7 +246,7 @@ const Register = () => {
                   <Label htmlFor="senha-inst" className="text-foreground">Senha</Label>
                   <Input id="senha-inst" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
-                <Button variant="secondary" className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Instituição</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate("/captura-facial")}>Criar Conta de Instituição</Button>
               </div>
             </TabsContent>
           </Tabs>
