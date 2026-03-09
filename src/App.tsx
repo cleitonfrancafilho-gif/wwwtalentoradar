@@ -14,6 +14,8 @@ import Chat from "./pages/Chat";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import EditProfile from "./pages/EditProfile";
+import FaceCapture from "./pages/FaceCapture";
+import HelpCenter from "./pages/HelpCenter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/termos" element={<Terms />} />
           <Route path="/privacidade" element={<Privacy />} />
           <Route path="/editar-perfil" element={<EditProfile />} />
+          <Route path="/captura-facial" element={<FaceCapture />} />
+          <Route path="/central-ajuda" element={<HelpCenter />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

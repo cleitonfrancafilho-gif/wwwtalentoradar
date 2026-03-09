@@ -181,7 +181,7 @@ const Register = () => {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Atleta</Button>
+                <Button className="w-full" onClick={() => navigate("/captura-facial")}>Criar Conta de Atleta</Button>
               </div>
             </TabsContent>
 
@@ -214,7 +214,7 @@ const Register = () => {
                 <div className="border border-cyan/30 rounded-lg p-3 glass-card">
                   <p className="text-xs text-cyan">🛡 Após o cadastro, envie seus documentos para receber o Selo de Verificado.</p>
                 </div>
-                <Button className="w-full bg-cyan text-cyan-foreground hover:bg-cyan/90" onClick={() => navigate("/selecionar-esportes")}>
+                <Button className="w-full bg-cyan text-cyan-foreground hover:bg-cyan/90" onClick={() => navigate("/captura-facial")}>
                   Criar Conta de Olheiro
                 </Button>
               </div>
@@ -246,7 +246,7 @@ const Register = () => {
                   <Label htmlFor="senha-inst" className="text-foreground">Senha</Label>
                   <Input id="senha-inst" type="password" placeholder="••••••••" className="mt-1.5 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
                 </div>
-                <Button variant="secondary" className="w-full" onClick={() => navigate("/selecionar-esportes")}>Criar Conta de Instituição</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate("/captura-facial")}>Criar Conta de Instituição</Button>
               </div>
             </TabsContent>
           </Tabs>

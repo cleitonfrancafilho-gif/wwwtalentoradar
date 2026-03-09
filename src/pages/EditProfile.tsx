@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import {
   ArrowLeft, User, Search, Building2, Camera, MapPin, Trophy, Ruler, Weight,
-  Star, Shield, Eye, EyeOff, Upload, Save, Plus, X, Radar,
+  Star, Shield, Eye, EyeOff, Upload, Save, Plus, X, Radar, HelpCircle,
 } from "lucide-react";
 
 // ─── ATHLETE EDIT ───
@@ -406,6 +406,22 @@ const EditProfile = () => {
             <InstitutionEdit />
           </TabsContent>
         </Tabs>
+
+        {/* Help Center link */}
+        <div className="mt-8 mb-4">
+          <button
+            onClick={() => navigate("/central-ajuda")}
+            className="w-full glass-card rounded-xl p-4 flex items-center gap-3 border border-border/50 hover:border-primary/30 transition-colors text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <HelpCircle className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-display font-semibold text-foreground">Central de Ajuda</p>
+              <p className="text-xs text-muted-foreground">FAQ, Suporte e Feedback</p>
+            </div>
+          </button>
+        </div>
       </main>
 
       <BottomNav />
