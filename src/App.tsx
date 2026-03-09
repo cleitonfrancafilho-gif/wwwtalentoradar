@@ -16,6 +16,7 @@ import AthleteProfile from "./pages/AthleteProfile";
 import TalentStudio from "./pages/TalentStudio";
 import EventsMap from "./pages/EventsMap";
 import Chat from "./pages/Chat";
+import Live from "./pages/Live";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import EditProfile from "./pages/EditProfile";
