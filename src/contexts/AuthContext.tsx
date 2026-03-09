@@ -120,8 +120,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id).then(() => {
-          checkRoles(session.user.id).then(() => setLoading(false));
+        tryClaimAdmin(session.user).then(() => {
+          fetchProfile(session.user.id).then(() => {
+            checkRoles(session.user.id).then(() => setLoading(false));
+          });
         });
       } else {
         setLoading(false);
