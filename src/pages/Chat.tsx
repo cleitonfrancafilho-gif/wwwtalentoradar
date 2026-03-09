@@ -383,19 +383,48 @@ const Chat = () => {
             {/* Input */}
             <div className="glass border-t border-border/50 px-4 py-3">
               <div className="max-w-2xl mx-auto flex gap-2 items-center">
-                <button onClick={() => setShowAttachMenu(!showAttachMenu)} className="text-muted-foreground hover:text-primary transition-colors p-1">
-                  <Paperclip className="w-5 h-5" />
-                </button>
-                <Input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                  placeholder="Digite sua mensagem..."
-                  className="flex-1 bg-muted border-border"
-                />
-                <Button size="icon" disabled={!message.trim()} onClick={sendMessage}>
-                  <Send className="w-4 h-4" />
-                </Button>
+                {isRecordingAudio ? (
+                  <VoiceRecorder
+                    onSend={(duration) => {
+                      const newMsg: Message = {
+                        id: messages.length + 1,
+                        sender: "athlete",
+                        text: `🎤 Áudio (${duration})`,
+                        time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+                        type: "text",
+                      };
+                      setMessages([...messages, newMsg]);
+                      setIsRecordingAudio(false);
+                      if (selectedChat) {
+                        setConversations(prev => prev.map(c => c.id === selectedChat ? { ...c, lastMessage: `🎤 Áudio (${duration})`, time: "Agora" } : c));
+                      }
+                      toast.success("Áudio enviado!");
+                    }}
+                    onCancel={() => setIsRecordingAudio(false)}
+                  />
+                ) : (
+                  <>
+                    <button onClick={() => setShowAttachMenu(!showAttachMenu)} className="text-muted-foreground hover:text-primary transition-colors p-1">
+                      <Paperclip className="w-5 h-5" />
+                    </button>
+                    <Input
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                      placeholder="Digite sua mensagem..."
+                      className="flex-1 bg-muted border-border"
+                    />
+                    {message.trim() ? (
+                      <Button size="icon" onClick={sendMessage}>
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    ) : (
+                      <button onClick={() => setIsRecordingAudio(true)} className="text-muted-foreground hover:text-primary transition-colors p-2">
+                        <Mic className="w-5 h-5" />
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
