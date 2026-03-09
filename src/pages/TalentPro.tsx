@@ -106,7 +106,7 @@ const TalentPro = () => {
           <div className="space-y-3">
             {[
               { feature: "Perfil básico", free: true, pro: true },
-              { feature: "Upload de vídeos", free: "3/mês", pro: "Ilimitado" },
+              { feature: "Upload de vídeos", free: "Ilimitado", pro: "Ilimitado" },
               { feature: "Ver quem visitou", free: "Só número", pro: "Nome + Clube" },
               { feature: "Filtros de busca", free: "Básico", pro: "Cirúrgico" },
               { feature: "Modo Stealth", free: false, pro: true },
