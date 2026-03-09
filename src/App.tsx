@@ -17,6 +17,7 @@ import Privacy from "./pages/Privacy";
 import EditProfile from "./pages/EditProfile";
 import FaceCapture from "./pages/FaceCapture";
 import HelpCenter from "./pages/HelpCenter";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
