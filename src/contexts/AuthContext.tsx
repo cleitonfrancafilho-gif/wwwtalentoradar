@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           // Use setTimeout to avoid Supabase client deadlock
           setTimeout(async () => {
+            await tryClaimAdmin(session.user);
             await fetchProfile(session.user.id);
             await checkRoles(session.user.id);
             setLoading(false);
@@ -109,6 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setProfile(null);
           setIsAdmin(false);
           setHasPro(false);
+          setAdminClaimAttempted(false);
           setLoading(false);
         }
       }
