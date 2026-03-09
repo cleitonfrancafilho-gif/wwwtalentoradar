@@ -64,6 +64,7 @@ const Chat = () => {
   const [pendingConvId, setPendingConvId] = useState<number | null>(null);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [callingType, setCallingType] = useState<"video" | "audio" | null>(null);
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const selectedConversation = conversations.find((c) => c.id === selectedChat);
