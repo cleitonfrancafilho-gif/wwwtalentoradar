@@ -18,6 +18,10 @@ import EditProfile from "./pages/EditProfile";
 import FaceCapture from "./pages/FaceCapture";
 import HelpCenter from "./pages/HelpCenter";
 import AdminDashboard from "./pages/AdminDashboard";
+import Settings from "./pages/Settings";
+import TalentPro from "./pages/TalentPro";
+import Notifications from "./pages/Notifications";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +48,10 @@ const App = () => (
           <Route path="/captura-facial" element={<FaceCapture />} />
           <Route path="/central-ajuda" element={<HelpCenter />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/configuracoes" element={<Settings />} />
+          <Route path="/assinatura" element={<TalentPro />} />
+          <Route path="/notificacoes" element={<Notifications />} />
+          <Route path="/sobre" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
