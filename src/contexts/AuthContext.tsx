@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [hasPro, setHasPro] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [adminClaimAttempted, setAdminClaimAttempted] = useState(false);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -42,6 +43,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .single();
     setProfile(data);
     return data;
+  };
+
+  const tryClaimAdmin = async (u: User) => {
+    // One-time bootstrap: if this account is the configured admin email, claim the admin role.
+    if (adminClaimAttempted) return;
+
+    const adminEmail = "admradar@gmail.com";
+    const userEmail = (u.email ?? "").toLowerCase();
+
+    if (userEmail !== adminEmail) return;
+
+    setAdminClaimAttempted(true);
+
+    try {
+      await supabase.functions.invoke("claim-admin");
+    } catch {
+      // ignore; role check below will still run
+    }
   };
 
   const checkRoles = async (userId: string) => {

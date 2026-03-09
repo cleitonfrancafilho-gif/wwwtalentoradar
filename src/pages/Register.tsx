@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Radar, User, Search, Building2, ArrowLeft, Mail, ShieldCheck, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 
 const Register = () => {
   const navigate = useNavigate();
