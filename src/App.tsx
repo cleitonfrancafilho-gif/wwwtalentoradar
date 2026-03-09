@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import RequireAuth from "@/components/RequireAuth";
 import RequireAdmin from "@/components/RequireAdmin";
+import RequirePro from "@/components/RequirePro";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -52,7 +53,7 @@ const App = () => (
             <Route path="/perfil/:id" element={<RequireAuth><AthleteProfile /></RequireAuth>} />
             <Route path="/talent-studio" element={<RequireAuth><TalentStudio /></RequireAuth>} />
             <Route path="/eventos" element={<RequireAuth><EventsMap /></RequireAuth>} />
-            <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+            <Route path="/chat" element={<RequirePro><Chat /></RequirePro>} />
             <Route path="/editar-perfil" element={<RequireAuth><EditProfile /></RequireAuth>} />
             <Route path="/captura-facial" element={<RequireAuth><FaceCapture /></RequireAuth>} />
             <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
@@ -71,3 +72,4 @@ const App = () => (
 );
 
 export default App;
+
