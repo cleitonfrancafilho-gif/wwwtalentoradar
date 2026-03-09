@@ -214,7 +214,7 @@ const Register = () => {
                 <div className="border border-cyan/30 rounded-lg p-3 glass-card">
                   <p className="text-xs text-cyan">🛡 Após o cadastro, envie seus documentos para receber o Selo de Verificado.</p>
                 </div>
-                <Button className="w-full bg-cyan text-cyan-foreground hover:bg-cyan/90" onClick={() => navigate("/selecionar-esportes")}>
+                <Button className="w-full bg-cyan text-cyan-foreground hover:bg-cyan/90" onClick={() => navigate("/captura-facial")}>
                   Criar Conta de Olheiro
                 </Button>
               </div>
