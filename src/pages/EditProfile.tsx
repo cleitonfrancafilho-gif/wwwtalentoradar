@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import {
   ArrowLeft, User, Search, Building2, Camera, MapPin, Trophy, Ruler, Weight,
-  Star, Shield, Eye, EyeOff, Upload, Save, Plus, X, Radar,
+  Star, Shield, Eye, EyeOff, Upload, Save, Plus, X, Radar, HelpCircle,
 } from "lucide-react";
 
 // ─── ATHLETE EDIT ───
