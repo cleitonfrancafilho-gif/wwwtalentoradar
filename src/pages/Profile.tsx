@@ -6,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import QRCodeModal from "@/components/QRCodeModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import {
   Settings, Edit, Grid3X3, Bookmark, Heart, MapPin, Shield, Trophy,
-  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified
+  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2
 } from "lucide-react";
 
 // Mock posts data
@@ -157,7 +158,15 @@ const Profile = () => {
             <Edit className="w-4 h-4 mr-2" />
             Editar perfil
           </Button>
-          <Button variant="secondary" className="bg-muted hover:bg-muted/80 text-foreground">
+          <Button
+            variant="secondary"
+            className="bg-muted hover:bg-muted/80 text-foreground"
+            onClick={() => {
+              const profileUrl = `${window.location.origin}/perfil/${user?.id || ""}`;
+              navigator.clipboard.writeText(profileUrl);
+              toast.success("Link do perfil copiado!");
+            }}
+          >
             <Share2 className="w-4 h-4" />
           </Button>
           <QRCodeModal athleteName={fullName} profileUrl={window.location.href} />
