@@ -16,6 +16,10 @@ import AthleteProfile from "./pages/AthleteProfile";
 import Profile from "./pages/Profile";
 import TalentStudio from "./pages/TalentStudio";
 import EventsMap from "./pages/EventsMap";
+import EvolutionPanel from "./pages/EvolutionPanel";
+import CareerCenter from "./pages/CareerCenter";
+import PhysicalProfile from "./pages/PhysicalProfile";
+import ProfessionalStructure from "./pages/ProfessionalStructure";
 import Chat from "./pages/Chat";
 import Live from "./pages/Live";
 import Terms from "./pages/Terms";
@@ -63,6 +67,10 @@ const App = () => (
             <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
             <Route path="/configuracoes" element={<RequireAuth><Settings /></RequireAuth>} />
             <Route path="/notificacoes" element={<RequireAuth><Notifications /></RequireAuth>} />
+            <Route path="/evolucao" element={<RequireAuth><EvolutionPanel /></RequireAuth>} />
+            <Route path="/carreira" element={<RequireAuth><CareerCenter /></RequireAuth>} />
+            <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
+            <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
 
             {/* Admin-only route */}
             <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import QRCodeModal from "@/components/QRCodeModal";
 import {
-  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame, UserPlus, UserCheck,
+  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame, UserPlus, UserCheck, Building,
 } from "lucide-react";
 
 const formatNumber = (n: number) => {
@@ -130,12 +130,37 @@ const AthleteProfile = () => {
           ))}
         </div>
 
+        {/* Representation Badge */}
+        <div className="flex items-center gap-2">
+          <Badge className="bg-primary/15 text-primary border-0 text-xs">
+            <Star className="w-3 h-3 mr-1" /> Livre no Mercado
+          </Badge>
+        </div>
+
         {/* Achievements */}
         <div>
           <h2 className="font-display font-bold text-foreground mb-3">Conquistas</h2>
           <div className="glass-card rounded-xl p-4 space-y-2 border border-transparent">
             {achievements.map((a, i) => (
               <p key={i} className="text-sm text-foreground">{a}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Club Timeline */}
+        <div>
+          <h2 className="font-display font-bold text-foreground mb-3">Histórico de Clubes</h2>
+          <div className="glass-card rounded-xl p-4 border border-transparent">
+            {[
+              { club: "EC Juventude SP", period: "Jan 2024 — Atual", achievement: "Artilheiro Sub-17" },
+              { club: "AA São Bento", period: "Mar 2023 — Dez 2023", achievement: "Seleção do campeonato" },
+            ].map((c, i) => (
+              <div key={i} className="relative pl-5 border-l-2 border-primary/30 pb-4 last:pb-0">
+                <div className="absolute left-[-5px] top-0.5 w-2.5 h-2.5 rounded-full bg-primary glow-green" />
+                <p className="text-sm font-display font-bold text-foreground">{c.club}</p>
+                <p className="text-[11px] text-muted-foreground">{c.period}</p>
+                <p className="text-xs text-primary mt-0.5">🏆 {c.achievement}</p>
+              </div>
             ))}
           </div>
         </div>

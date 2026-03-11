@@ -9,7 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   Settings, Edit, Grid3X3, Bookmark, Heart, MapPin, Shield, Trophy,
-  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2
+  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2,
+  Flame, Activity, Briefcase, BookOpen,
 } from "lucide-react";
 
 // Mock posts data
@@ -147,6 +148,27 @@ const Profile = () => {
             <span>{address}</span>
           </div>
         </div>
+
+        {/* Quick Access Cards */}
+        {profileType === "atleta" && (
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {[
+              { icon: Flame, label: "Evolução", path: "/evolucao", color: "text-primary" },
+              { icon: BookOpen, label: "Carreira", path: "/carreira", color: "text-cyan" },
+              { icon: Activity, label: "Físico", path: "/perfil-fisico", color: "text-secondary" },
+              { icon: Briefcase, label: "Clubes", path: "/estrutura-profissional", color: "text-foreground" },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="glass-card rounded-xl p-3 text-center hover:border-primary/20 transition-colors border border-transparent"
+              >
+                <item.icon className={`w-5 h-5 ${item.color} mx-auto mb-1`} />
+                <span className="text-[10px] text-muted-foreground font-display">{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex gap-2 mb-6">

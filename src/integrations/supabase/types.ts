@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      club_history: {
+        Row: {
+          achievements: string | null
+          club_name: string
+          created_at: string
+          id: string
+          period_end: string | null
+          period_start: string
+          user_id: string
+        }
+        Insert: {
+          achievements?: string | null
+          club_name: string
+          created_at?: string
+          id?: string
+          period_end?: string | null
+          period_start: string
+          user_id: string
+        }
+        Update: {
+          achievements?: string | null
+          club_name?: string
+          created_at?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -36,9 +66,11 @@ export type Database = {
           professional_link: string | null
           profile_type: Database["public"]["Enums"]["profile_type"]
           registration_number: string | null
+          representation_status: string | null
           sport: string | null
           updated_at: string
           weight_kg: number | null
+          wingspan_cm: number | null
         }
         Insert: {
           address?: string | null
@@ -61,9 +93,11 @@ export type Database = {
           professional_link?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
           registration_number?: string | null
+          representation_status?: string | null
           sport?: string | null
           updated_at?: string
           weight_kg?: number | null
+          wingspan_cm?: number | null
         }
         Update: {
           address?: string | null
@@ -86,9 +120,11 @@ export type Database = {
           professional_link?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
           registration_number?: string | null
+          representation_status?: string | null
           sport?: string | null
           updated_at?: string
           weight_kg?: number | null
+          wingspan_cm?: number | null
         }
         Relationships: []
       }
@@ -133,6 +169,27 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      training_checkins: {
+        Row: {
+          check_date: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          check_date?: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          check_date?: string
+          created_at?: string
+          id?: string
           user_id?: string
         }
         Relationships: []

@@ -62,6 +62,34 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Success Testimonials */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-center mb-4">
+            Depoimentos de <span className="text-gradient-neon">Sucesso</span>
+          </h2>
+          <p className="text-muted-foreground text-center mb-12 max-w-lg mx-auto">Atletas que conquistaram oportunidades reais através do TalentRadar.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Pedro Henrique", age: 17, sport: "Futebol", quote: "Consegui uma vaga no Sub-17 do São Paulo após um olheiro ver meu DVD Digital aqui!", emoji: "⚽" },
+              { name: "Ana Clara", age: 15, sport: "Vôlei", quote: "Recebi convite para treinar na seleção estadual. O TalentRadar mudou minha carreira!", emoji: "🏐" },
+              { name: "Lucas Martins", age: 16, sport: "Basquete", quote: "Em 2 meses na plataforma, já participei de 3 peneiras e fui aprovado em uma.", emoji: "🏀" },
+            ].map((t, i) => (
+              <div key={i} className="glass-card rounded-xl p-6 border border-transparent hover:border-primary/30 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl">{t.emoji}</div>
+                  <div>
+                    <p className="font-display font-bold text-foreground">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.age} anos • {t.sport}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground italic">"{t.quote}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 px-4 text-center">
         <h2 className="text-2xl md:text-3xl font-display font-bold mb-4 text-foreground">Pronto para ser descoberto?</h2>
         <p className="text-muted-foreground mb-8 max-w-lg mx-auto">Junte-se a milhares de atletas, olheiros e instituições que já usam o TalentRadar.</p>
