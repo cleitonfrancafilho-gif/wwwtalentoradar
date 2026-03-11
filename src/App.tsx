@@ -67,6 +67,10 @@ const App = () => (
             <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
             <Route path="/configuracoes" element={<RequireAuth><Settings /></RequireAuth>} />
             <Route path="/notificacoes" element={<RequireAuth><Notifications /></RequireAuth>} />
+            <Route path="/evolucao" element={<RequireAuth><EvolutionPanel /></RequireAuth>} />
+            <Route path="/carreira" element={<RequireAuth><CareerCenter /></RequireAuth>} />
+            <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
+            <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
 
             {/* Admin-only route */}
             <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
