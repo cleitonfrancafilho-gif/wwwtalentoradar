@@ -9,7 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   Settings, Edit, Grid3X3, Bookmark, Heart, MapPin, Shield, Trophy,
-  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2
+  Users, UserPlus, Play, Eye, Share2, MoreHorizontal, Verified, Link2,
+  Flame, Activity, Briefcase, BookOpen,
 } from "lucide-react";
 
 // Mock posts data
