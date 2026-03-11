@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import QRCodeModal from "@/components/QRCodeModal";
 import {
-  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame, UserPlus, UserCheck,
+  ArrowLeft, Play, MapPin, Trophy, Ruler, Weight, Star, MessageCircle, Share2, Shield, Flame, UserPlus, UserCheck, Building,
 } from "lucide-react";
 
 const formatNumber = (n: number) => {
