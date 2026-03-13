@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import RequireAuth from "@/components/RequireAuth";
 import RequireAdmin from "@/components/RequireAdmin";
 import RequirePro from "@/components/RequirePro";
@@ -32,6 +33,7 @@ import Settings from "./pages/Settings";
 import TalentPro from "./pages/TalentPro";
 import Notifications from "./pages/Notifications";
 import About from "./pages/About";
+import RecruitmentEvents from "./pages/RecruitmentEvents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,46 +44,48 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Register />} />
-            <Route path="/termos" element={<Terms />} />
-            <Route path="/privacidade" element={<Privacy />} />
-            <Route path="/sobre" element={<About />} />
-            <Route path="/assinatura" element={<TalentPro />} />
+        <LanguageProvider>
+          <AuthProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/cadastro" element={<Register />} />
+              <Route path="/termos" element={<Terms />} />
+              <Route path="/privacidade" element={<Privacy />} />
+              <Route path="/sobre" element={<About />} />
+              <Route path="/assinatura" element={<TalentPro />} />
 
-            {/* Auth-required routes */}
-            <Route path="/selecionar-esportes" element={<RequireAuth><SelectSports /></RequireAuth>} />
-            <Route path="/feed" element={<RequireAuth><Feed /></RequireAuth>} />
-            <Route path="/perfil/:id" element={<RequireAuth><AthleteProfile /></RequireAuth>} />
-            <Route path="/perfil" element={<RequireAuth><Profile /></RequireAuth>} />
-            <Route path="/talent-studio" element={<RequireAuth><TalentStudio /></RequireAuth>} />
-            <Route path="/eventos" element={<RequireAuth><EventsMap /></RequireAuth>} />
-            <Route path="/chat" element={<RequirePro><Chat /></RequirePro>} />
-            <Route path="/live" element={<RequireAuth><Live /></RequireAuth>} />
-            <Route path="/editar-perfil" element={<RequireAuth><EditProfile /></RequireAuth>} />
-            <Route path="/captura-facial" element={<RequireAuth><FaceCapture /></RequireAuth>} />
-            <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
-            <Route path="/configuracoes" element={<RequireAuth><Settings /></RequireAuth>} />
-            <Route path="/notificacoes" element={<RequireAuth><Notifications /></RequireAuth>} />
-            <Route path="/evolucao" element={<RequireAuth><EvolutionPanel /></RequireAuth>} />
-            <Route path="/carreira" element={<RequireAuth><CareerCenter /></RequireAuth>} />
-            <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
-            <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
+              {/* Auth-required routes */}
+              <Route path="/selecionar-esportes" element={<RequireAuth><SelectSports /></RequireAuth>} />
+              <Route path="/feed" element={<RequireAuth><Feed /></RequireAuth>} />
+              <Route path="/perfil/:id" element={<RequireAuth><AthleteProfile /></RequireAuth>} />
+              <Route path="/perfil" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/talent-studio" element={<RequireAuth><TalentStudio /></RequireAuth>} />
+              <Route path="/eventos" element={<RequireAuth><EventsMap /></RequireAuth>} />
+              <Route path="/chat" element={<RequirePro><Chat /></RequirePro>} />
+              <Route path="/live" element={<RequireAuth><Live /></RequireAuth>} />
+              <Route path="/editar-perfil" element={<RequireAuth><EditProfile /></RequireAuth>} />
+              <Route path="/captura-facial" element={<RequireAuth><FaceCapture /></RequireAuth>} />
+              <Route path="/central-ajuda" element={<RequireAuth><HelpCenter /></RequireAuth>} />
+              <Route path="/configuracoes" element={<RequireAuth><Settings /></RequireAuth>} />
+              <Route path="/notificacoes" element={<RequireAuth><Notifications /></RequireAuth>} />
+              <Route path="/evolucao" element={<RequireAuth><EvolutionPanel /></RequireAuth>} />
+              <Route path="/carreira" element={<RequireAuth><CareerCenter /></RequireAuth>} />
+              <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
+              <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
+              <Route path="/recrutamento" element={<RequireAuth><RecruitmentEvents /></RequireAuth>} />
 
-            {/* Admin-only route */}
-            <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+              {/* Admin-only route */}
+              <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </LanguageProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
 
 export default App;
-
