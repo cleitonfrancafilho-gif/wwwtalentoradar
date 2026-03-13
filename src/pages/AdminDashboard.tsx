@@ -6,8 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { Radar, Shield, Users, Activity, AlertTriangle, Search, RotateCcw, Bell, Settings, ArrowLeft, Server, TrendingUp, UserCog, Crown, Check, X, Loader2, RefreshCw } from "lucide-react";
+import { Radar, Shield, Users, Activity, AlertTriangle, Search, RotateCcw, Bell, Settings, ArrowLeft, Server, TrendingUp, UserCog, Crown, Check, X, Loader2, RefreshCw, Trash2, Ban, Eye, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,6 +40,11 @@ const AdminDashboard = () => {
   const [grantDays, setGrantDays] = useState("30");
   const [grantLoading, setGrantLoading] = useState(false);
   const [revokeDialog, setRevokeDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [pushMessage, setPushMessage] = useState("");
+  const [totalMessages, setTotalMessages] = useState(0);
+  const [totalConversations, setTotalConversations] = useState(0);
+  const [totalNotifications, setTotalNotifications] = useState(0);
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
@@ -54,7 +63,16 @@ const AdminDashboard = () => {
     setLoadingUsers(false);
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  const fetchStats = async () => {
+    const { count: msgCount } = await supabase.from("messages").select("*", { count: "exact", head: true });
+    const { count: convCount } = await supabase.from("conversations").select("*", { count: "exact", head: true });
+    const { count: notifCount } = await supabase.from("notifications").select("*", { count: "exact", head: true });
+    setTotalMessages(msgCount || 0);
+    setTotalConversations(convCount || 0);
+    setTotalNotifications(notifCount || 0);
+  };
+
+  useEffect(() => { fetchUsers(); fetchStats(); }, []);
 
   const filteredUsers = users.filter((u) =>
     u.full_name.toLowerCase().includes(searchUser.toLowerCase()) ||
@@ -81,9 +99,41 @@ const AdminDashboard = () => {
     setGrantLoading(false);
   };
 
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setGrantLoading(true);
+    // Delete related data
+    await supabase.from("messages").delete().or(`sender_id.eq.${selectedUser.id},receiver_id.eq.${selectedUser.id}`);
+    await supabase.from("conversations").delete().or(`participant_1.eq.${selectedUser.id},participant_2.eq.${selectedUser.id}`);
+    await supabase.from("notifications").delete().eq("user_id", selectedUser.id);
+    await supabase.from("favorites").delete().or(`user_id.eq.${selectedUser.id},athlete_id.eq.${selectedUser.id}`);
+    await supabase.from("training_checkins").delete().eq("user_id", selectedUser.id);
+    await supabase.from("club_history").delete().eq("user_id", selectedUser.id);
+    await supabase.from("subscriptions").delete().eq("user_id", selectedUser.id);
+    await supabase.from("user_roles").delete().eq("user_id", selectedUser.id);
+    await supabase.from("profiles").delete().eq("id", selectedUser.id);
+    
+    toast.success(`🗑️ Conta de ${selectedUser.full_name} excluída permanentemente`);
+    setDeleteDialog(false);
+    setSelectedUser(null);
+    await fetchUsers();
+    setGrantLoading(false);
+  };
+
   const handleResetPassword = async (userEmail: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(userEmail, { redirectTo: `${window.location.origin}/login` });
     if (error) toast.error("Erro: " + error.message); else toast.success(`Link de reset enviado para ${userEmail}`);
+  };
+
+  const handleSendPushAll = async () => {
+    if (!pushMessage.trim()) return;
+    const allIds = users.map(u => u.id);
+    const inserts = allIds.map(uid => ({
+      user_id: uid, type: "admin_broadcast", title: "📢 Comunicado", body: pushMessage,
+    }));
+    const { error } = await supabase.from("notifications").insert(inserts);
+    if (error) toast.error("Erro: " + error.message);
+    else { toast.success(`Notificação enviada para ${allIds.length} usuários`); setPushMessage(""); }
   };
 
   const getSubBadge = (sub: UserRow["subscription"]) => {
@@ -94,6 +144,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Grant Pro Dialog */}
       <Dialog open={grantDialog} onOpenChange={setGrantDialog}>
         <DialogContent className="bg-card border-border">
           <DialogHeader>
@@ -114,6 +165,7 @@ const AdminDashboard = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Revoke Dialog */}
       <Dialog open={revokeDialog} onOpenChange={setRevokeDialog}>
         <DialogContent className="bg-card border-border">
           <DialogHeader>
@@ -126,6 +178,24 @@ const AdminDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Account Dialog */}
+      <AlertDialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive flex items-center gap-2"><Trash2 className="w-5 h-5" /> Excluir Conta Permanentemente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é <strong>irreversível</strong>. Todos os dados de <strong>{selectedUser?.full_name}</strong> ({selectedUser?.email}) serão excluídos permanentemente, incluindo mensagens, conversas, notificações, check-ins, assinaturas e favoritos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleDeleteUser} disabled={grantLoading}>
+              {grantLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />} Excluir Definitivamente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -145,7 +215,7 @@ const AdminDashboard = () => {
             { label: "Usuários Totais", value: loadingUsers ? "..." : totalUsers.toString(), icon: Users, color: "text-primary" },
             { label: "Novos Hoje", value: loadingUsers ? "..." : `+${newToday}`, icon: TrendingUp, color: "text-primary" },
             { label: "Assinantes Pro", value: loadingUsers ? "..." : activeSubscriptions.toString(), icon: Crown, color: "text-secondary" },
-            { label: "Uptime", value: "99.97%", icon: Server, color: "text-cyan" },
+            { label: "Mensagens", value: totalMessages.toString(), icon: MessageCircle, color: "text-cyan" },
           ].map((stat, i) => (
             <div key={i} className="glass-card rounded-xl p-4 border border-transparent">
               <div className="flex items-center gap-2 mb-1"><stat.icon className={`w-4 h-4 ${stat.color}`} /><span className="text-xs text-muted-foreground">{stat.label}</span></div>
@@ -169,7 +239,7 @@ const AdminDashboard = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input placeholder="Buscar por nome ou e-mail..." value={searchUser} onChange={(e) => setSearchUser(e.target.value)} className="pl-10 bg-muted border-border text-foreground placeholder:text-muted-foreground" />
               </div>
-              <Button variant="outline" size="icon" onClick={fetchUsers}><RefreshCw className="w-4 h-4" /></Button>
+              <Button variant="outline" size="icon" onClick={() => { fetchUsers(); fetchStats(); }}><RefreshCw className="w-4 h-4" /></Button>
             </div>
             {loadingUsers ? (
               <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
@@ -185,11 +255,14 @@ const AdminDashboard = () => {
                         {getSubBadge(u.subscription)}
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                      <p className="text-[10px] text-muted-foreground">Criado: {new Date(u.created_at).toLocaleDateString("pt-BR")}</p>
                     </div>
                     <div className="flex gap-1.5 shrink-0">
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Ver perfil" onClick={() => navigate(`/perfil/${u.id}`)}><Eye className="w-4 h-4 text-muted-foreground" /></Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Conceder Pro" onClick={() => { setSelectedUser(u); setGrantDialog(true); }}><Crown className="w-4 h-4 text-secondary" /></Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Resetar senha" onClick={() => handleResetPassword(u.email)}><RotateCcw className="w-4 h-4 text-muted-foreground" /></Button>
                       {u.subscription?.status === "active" && <Button size="icon" variant="ghost" className="h-8 w-8" title="Revogar Pro" onClick={() => { setSelectedUser(u); setRevokeDialog(true); }}><X className="w-4 h-4 text-destructive" /></Button>}
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Excluir conta" onClick={() => { setSelectedUser(u); setDeleteDialog(true); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                     </div>
                   </div>
                 ))}
@@ -225,8 +298,8 @@ const AdminDashboard = () => {
             </div>
             <div className="glass-card rounded-xl p-6 border border-primary/30 space-y-3">
               <h3 className="font-display font-bold text-primary flex items-center gap-2"><Bell className="w-5 h-5" /> Notificações Push em Massa</h3>
-              <Input placeholder="Mensagem para todos os usuários..." className="bg-muted border-border text-foreground placeholder:text-muted-foreground" />
-              <Button size="sm"><Bell className="w-3.5 h-3.5 mr-1.5" /> Enviar para Todos</Button>
+              <Input placeholder="Mensagem para todos os usuários..." value={pushMessage} onChange={(e) => setPushMessage(e.target.value)} className="bg-muted border-border text-foreground placeholder:text-muted-foreground" />
+              <Button size="sm" onClick={handleSendPushAll} disabled={!pushMessage.trim()}><Bell className="w-3.5 h-3.5 mr-1.5" /> Enviar para Todos</Button>
             </div>
           </TabsContent>
 
@@ -241,8 +314,13 @@ const AdminDashboard = () => {
             </div>
             <div className="glass-card rounded-xl p-6 border border-primary/20">
               <h3 className="font-display font-bold text-foreground mb-4 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-primary" /> Métricas</h3>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                {[{ label: "Usuários", value: totalUsers.toString() }, { label: "Novos Hoje", value: `+${newToday}` }, { label: "Pro Ativos", value: activeSubscriptions.toString() }].map((m, i) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                {[
+                  { label: "Usuários", value: totalUsers.toString() },
+                  { label: "Mensagens", value: totalMessages.toString() },
+                  { label: "Conversas", value: totalConversations.toString() },
+                  { label: "Notificações", value: totalNotifications.toString() },
+                ].map((m, i) => (
                   <div key={i}><p className="text-xs text-muted-foreground">{m.label}</p><p className="text-xl font-display font-bold text-primary">{m.value}</p></div>
                 ))}
               </div>
@@ -256,7 +334,10 @@ const AdminDashboard = () => {
                 <Check className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-display font-semibold">Painel protegido por RequireAdmin + RLS</span>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
-                <Shield className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-display font-semibold">E-mail confirmado automaticamente</span>
+                <Shield className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-display font-semibold">Exclusão de contas com cascade completo</span>
+              </div>
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                <Ban className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-display font-semibold">Kill Switch de manutenção disponível</span>
               </div>
             </div>
           </TabsContent>
