@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      athlete_evaluations: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          dribble: number | null
+          evaluator_id: string
+          id: string
+          notes: string | null
+          speed: number | null
+          stamina: number | null
+          strength: number | null
+          tactics: number | null
+          technique: number | null
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          dribble?: number | null
+          evaluator_id: string
+          id?: string
+          notes?: string | null
+          speed?: number | null
+          stamina?: number | null
+          strength?: number | null
+          tactics?: number | null
+          technique?: number | null
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          dribble?: number | null
+          evaluator_id?: string
+          id?: string
+          notes?: string | null
+          speed?: number | null
+          stamina?: number | null
+          strength?: number | null
+          tactics?: number | null
+          technique?: number | null
+        }
+        Relationships: []
+      }
       club_history: {
         Row: {
           achievements: string | null
@@ -40,6 +82,191 @@ export type Database = {
           id?: string
           period_end?: string | null
           period_start?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_votes: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          id: string
+          voter_id: string
+          week_start: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          id?: string
+          voter_id: string
+          week_start: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          id?: string
+          voter_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          accepted: boolean
+          created_at: string
+          id: string
+          last_message_at: string | null
+          muted_by_1: boolean | null
+          muted_by_2: boolean | null
+          participant_1: string
+          participant_2: string
+          pinned_by_1: boolean | null
+          pinned_by_2: boolean | null
+        }
+        Insert: {
+          accepted?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          muted_by_1?: boolean | null
+          muted_by_2?: boolean | null
+          participant_1: string
+          participant_2: string
+          pinned_by_1?: boolean | null
+          pinned_by_2?: boolean | null
+        }
+        Update: {
+          accepted?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          muted_by_1?: boolean | null
+          muted_by_2?: boolean | null
+          participant_1?: string
+          participant_2?: string
+          pinned_by_1?: boolean | null
+          pinned_by_2?: boolean | null
+        }
+        Relationships: []
+      }
+      event_applications: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          event_id: string
+          id: string
+          status: string
+          video_url: string | null
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          event_id: string
+          id?: string
+          status?: string
+          video_url?: string | null
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          status?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_applications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "recruitment_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          receiver_id: string
+          sender_id: string
+          type: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id: string
+          sender_id: string
+          type?: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id?: string
+          sender_id?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string
+          created_at: string
+          id: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: []
@@ -125,6 +352,51 @@ export type Database = {
           updated_at?: string
           weight_kg?: number | null
           wingspan_cm?: number | null
+        }
+        Relationships: []
+      }
+      recruitment_events: {
+        Row: {
+          created_at: string
+          creator_id: string
+          description: string | null
+          event_date: string | null
+          id: string
+          location: string | null
+          max_age: number | null
+          min_height_cm: number | null
+          position: string | null
+          sport: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          location?: string | null
+          max_age?: number | null
+          min_height_cm?: number | null
+          position?: string | null
+          sport: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          location?: string | null
+          max_age?: number | null
+          min_height_cm?: number | null
+          position?: string | null
+          sport?: string
+          status?: string
+          title?: string
         }
         Relationships: []
       }
