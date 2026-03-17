@@ -34,6 +34,11 @@ import TalentPro from "./pages/TalentPro";
 import Notifications from "./pages/Notifications";
 import About from "./pages/About";
 import RecruitmentEvents from "./pages/RecruitmentEvents";
+import CommunityVote from "./pages/CommunityVote";
+import AthleteMap from "./pages/AthleteMap";
+import ScoutEvaluation from "./pages/ScoutEvaluation";
+import ExportCenter from "./pages/ExportCenter";
+import BaseManagement from "./pages/BaseManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
