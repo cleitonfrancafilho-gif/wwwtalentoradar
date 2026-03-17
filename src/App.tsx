@@ -34,6 +34,11 @@ import TalentPro from "./pages/TalentPro";
 import Notifications from "./pages/Notifications";
 import About from "./pages/About";
 import RecruitmentEvents from "./pages/RecruitmentEvents";
+import CommunityVote from "./pages/CommunityVote";
+import AthleteMap from "./pages/AthleteMap";
+import ScoutEvaluation from "./pages/ScoutEvaluation";
+import ExportCenter from "./pages/ExportCenter";
+import BaseManagement from "./pages/BaseManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,6 +80,11 @@ const App = () => (
               <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
               <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
               <Route path="/recrutamento" element={<RequireAuth><RecruitmentEvents /></RequireAuth>} />
+              <Route path="/voto-galeria" element={<RequireAuth><CommunityVote /></RequireAuth>} />
+              <Route path="/mapa-talentos" element={<RequireAuth><AthleteMap /></RequireAuth>} />
+              <Route path="/avaliacao-tecnica" element={<RequireAuth><ScoutEvaluation /></RequireAuth>} />
+              <Route path="/exportar" element={<RequireAuth><ExportCenter /></RequireAuth>} />
+              <Route path="/gestao-base" element={<RequireAuth><BaseManagement /></RequireAuth>} />
 
               {/* Admin-only route */}
               <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />

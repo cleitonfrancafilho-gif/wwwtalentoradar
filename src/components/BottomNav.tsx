@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, MessageCircle, PlusCircle, MapPin, User, Settings } from "lucide-react";
+import { Home, MessageCircle, PlusCircle, MapPin, User } from "lucide-react";
+import SidebarDrawer from "@/components/SidebarDrawer";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/feed" },
@@ -7,7 +8,6 @@ const navItems = [
   { icon: PlusCircle, label: "Studio", path: "/talent-studio" },
   { icon: MapPin, label: "News/Map", path: "/eventos" },
   { icon: User, label: "Profile", path: "/perfil" },
-  { icon: Settings, label: "Config", path: "/configuracoes" },
 ];
 
 const BottomNav = () => {
@@ -17,6 +17,9 @@ const BottomNav = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50">
       <div className="max-w-2xl mx-auto flex justify-around py-2 safe-area-pb">
+        {/* Sidebar hamburger trigger */}
+        <SidebarDrawer />
+
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || 
             (item.path === "/feed" && location.pathname === "/feed" && !location.search);
