@@ -80,6 +80,11 @@ const App = () => (
               <Route path="/perfil-fisico" element={<RequireAuth><PhysicalProfile /></RequireAuth>} />
               <Route path="/estrutura-profissional" element={<RequireAuth><ProfessionalStructure /></RequireAuth>} />
               <Route path="/recrutamento" element={<RequireAuth><RecruitmentEvents /></RequireAuth>} />
+              <Route path="/voto-galeria" element={<RequireAuth><CommunityVote /></RequireAuth>} />
+              <Route path="/mapa-talentos" element={<RequireAuth><AthleteMap /></RequireAuth>} />
+              <Route path="/avaliacao-tecnica" element={<RequireAuth><ScoutEvaluation /></RequireAuth>} />
+              <Route path="/exportar" element={<RequireAuth><ExportCenter /></RequireAuth>} />
+              <Route path="/gestao-base" element={<RequireAuth><BaseManagement /></RequireAuth>} />
 
               {/* Admin-only route */}
               <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
