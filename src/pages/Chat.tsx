@@ -288,15 +288,21 @@ const Chat = () => {
 
   const togglePin = async (conv: ConversationData, e: React.MouseEvent) => {
     e.stopPropagation();
-    const field = conv.participant_1 === user?.id ? "pinned_by_1" : "pinned_by_2";
-    await supabase.from("conversations").update({ [field]: !pinnedForMe(conv) }).eq("id", conv.id);
+    const isP1 = conv.participant_1 === user?.id;
+    const updateData = isP1
+      ? { pinned_by_1: !pinnedForMe(conv) }
+      : { pinned_by_2: !pinnedForMe(conv) };
+    await supabase.from("conversations").update(updateData).eq("id", conv.id);
     loadConversations();
   };
 
   const toggleMute = async (conv: ConversationData, e: React.MouseEvent) => {
     e.stopPropagation();
-    const field = conv.participant_1 === user?.id ? "muted_by_1" : "muted_by_2";
-    await supabase.from("conversations").update({ [field]: !mutedForMe(conv) }).eq("id", conv.id);
+    const isP1 = conv.participant_1 === user?.id;
+    const updateData = isP1
+      ? { muted_by_1: !mutedForMe(conv) }
+      : { muted_by_2: !mutedForMe(conv) };
+    await supabase.from("conversations").update(updateData).eq("id", conv.id);
     loadConversations();
   };
 

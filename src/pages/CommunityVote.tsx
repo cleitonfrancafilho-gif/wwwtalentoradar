@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import BottomNav from "@/components/BottomNav";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Trophy, ThumbsUp, Crown, Medal, Loader2 } from "lucide-react";
@@ -19,6 +19,8 @@ interface RankedAthlete {
   votes: number;
 }
 
+const SPORTS = ["Futebol", "Vôlei", "Basquete", "Futsal", "Handebol", "Natação", "Tênis", "Atletismo"];
+
 const CommunityVote = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,6 +28,7 @@ const CommunityVote = () => {
   const [ranking, setRanking] = useState<RankedAthlete[]>([]);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState<string | null>(null);
+  const [sportFilter, setSportFilter] = useState("todos");
 
   const getWeekStart = () => {
     const now = new Date();
@@ -44,12 +47,13 @@ const CommunityVote = () => {
       .eq("week_start", weekStart);
 
     if (!votes || votes.length === 0) {
-      // Show all athletes if no votes yet
-      const { data: athletes } = await supabase
+      let query = supabase
         .from("profiles")
         .select("id, full_name, sport, position, avatar_url")
         .eq("profile_type", "atleta")
         .limit(10);
+      if (sportFilter !== "todos") query = query.eq("sport", sportFilter);
+      const { data: athletes } = await query;
 
       setRanking((athletes || []).map(a => ({
         athlete_id: a.id,
@@ -63,17 +67,18 @@ const CommunityVote = () => {
       return;
     }
 
-    // Count votes per athlete
     const voteCounts: Record<string, number> = {};
     votes.forEach(v => {
       voteCounts[v.athlete_id] = (voteCounts[v.athlete_id] || 0) + 1;
     });
 
     const athleteIds = Object.keys(voteCounts);
-    const { data: profiles } = await supabase
+    let query = supabase
       .from("profiles")
       .select("id, full_name, sport, position, avatar_url")
       .in("id", athleteIds);
+    if (sportFilter !== "todos") query = query.eq("sport", sportFilter);
+    const { data: profiles } = await query;
 
     const ranked = (profiles || [])
       .map(p => ({
@@ -91,7 +96,7 @@ const CommunityVote = () => {
     setLoading(false);
   };
 
-  useEffect(() => { loadRanking(); }, []);
+  useEffect(() => { loadRanking(); }, [sportFilter]);
 
   const handleVote = async (athleteId: string) => {
     if (!user) return;
@@ -130,7 +135,7 @@ const CommunityVote = () => {
           </button>
           <Trophy className="w-5 h-5 text-primary" />
           <span className="font-display font-bold text-lg text-foreground">
-            {lang === "en" ? "Community Vote" : "Voto da Galeria"}
+            {lang === "en" ? "Community Vote" : "Voto da Galera"}
           </span>
         </div>
       </header>
@@ -143,6 +148,29 @@ const CommunityVote = () => {
           <p className="text-xs text-muted-foreground mt-1">
             {lang === "en" ? "Vote for your favorite athlete of the week" : "Vote no seu atleta favorito da semana"}
           </p>
+        </div>
+
+        {/* Sport Filter */}
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            size="sm"
+            variant={sportFilter === "todos" ? "default" : "outline"}
+            onClick={() => setSportFilter("todos")}
+            className="text-xs"
+          >
+            {lang === "en" ? "All" : "Todos"}
+          </Button>
+          {SPORTS.map(s => (
+            <Button
+              key={s}
+              size="sm"
+              variant={sportFilter === s ? "default" : "outline"}
+              onClick={() => setSportFilter(s)}
+              className="text-xs"
+            >
+              {s}
+            </Button>
+          ))}
         </div>
 
         {loading ? (

@@ -22,7 +22,7 @@ const SidebarDrawer = () => {
     { icon: Trophy, label: lang === "en" ? "Recruitment Events" : "Eventos de Recrutamento", path: "/recrutamento", show: true },
     { icon: Users, label: lang === "en" ? "Base Management" : "Gestão de Base", path: "/gestao-base", show: isClub },
     { icon: FileDown, label: lang === "en" ? "Export Center" : "Central de Exportação", path: "/exportar", show: true },
-    { icon: Star, label: lang === "en" ? "Community Vote" : "Voto da Galeria", path: "/voto-galeria", show: true },
+    { icon: Star, label: lang === "en" ? "Community Vote" : "Voto da Galera", path: "/voto-galeria", show: true },
     { icon: Map, label: lang === "en" ? "Talent Map" : "Mapa de Talentos", path: "/mapa-talentos", show: true },
     { icon: ClipboardList, label: lang === "en" ? "Scout Evaluation" : "Avaliação Técnica", path: "/avaliacao-tecnica", show: isClub },
     { icon: Shield, label: lang === "en" ? "Admin Panel" : "Painel Admin", path: "/admin", show: isAdmin },
