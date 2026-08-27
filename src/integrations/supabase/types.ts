@@ -279,7 +279,9 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           birth_date: string | null
+          city: string | null
           cnpj: string | null
+          country: string | null
           cpf: string | null
           created_at: string
           dominant_foot: string | null
@@ -287,7 +289,9 @@ export type Database = {
           full_name: string
           height_cm: number | null
           id: string
+          latitude: number | null
           legal_representative: string | null
+          longitude: number | null
           phone: string | null
           position: string | null
           professional_link: string | null
@@ -295,6 +299,7 @@ export type Database = {
           registration_number: string | null
           representation_status: string | null
           sport: string | null
+          state: string | null
           updated_at: string
           weight_kg: number | null
           wingspan_cm: number | null
@@ -306,7 +311,9 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           birth_date?: string | null
+          city?: string | null
           cnpj?: string | null
+          country?: string | null
           cpf?: string | null
           created_at?: string
           dominant_foot?: string | null
@@ -314,7 +321,9 @@ export type Database = {
           full_name?: string
           height_cm?: number | null
           id: string
+          latitude?: number | null
           legal_representative?: string | null
+          longitude?: number | null
           phone?: string | null
           position?: string | null
           professional_link?: string | null
@@ -322,6 +331,7 @@ export type Database = {
           registration_number?: string | null
           representation_status?: string | null
           sport?: string | null
+          state?: string | null
           updated_at?: string
           weight_kg?: number | null
           wingspan_cm?: number | null
@@ -333,7 +343,9 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           birth_date?: string | null
+          city?: string | null
           cnpj?: string | null
+          country?: string | null
           cpf?: string | null
           created_at?: string
           dominant_foot?: string | null
@@ -341,7 +353,9 @@ export type Database = {
           full_name?: string
           height_cm?: number | null
           id?: string
+          latitude?: number | null
           legal_representative?: string | null
+          longitude?: number | null
           phone?: string | null
           position?: string | null
           professional_link?: string | null
@@ -349,6 +363,7 @@ export type Database = {
           registration_number?: string | null
           representation_status?: string | null
           sport?: string | null
+          state?: string | null
           updated_at?: string
           weight_kg?: number | null
           wingspan_cm?: number | null
