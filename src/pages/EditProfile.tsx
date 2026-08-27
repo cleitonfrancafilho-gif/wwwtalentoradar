@@ -20,6 +20,9 @@ interface ProfileForm {
   full_name: string;
   bio: string;
   address: string;
+  country: string;
+  state: string;
+  city: string;
   sport: string;
   position: string;
   dominant_foot: string;
@@ -68,11 +71,25 @@ const AthleteEdit = ({ form, setForm }: { form: ProfileForm; setForm: (f: Profil
             <Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className="mt-1 bg-muted border-border text-foreground" />
           </div>
           <div>
-            <Label className="text-foreground text-sm">Cidade</Label>
+            <Label className="text-foreground text-sm">Endereço (opcional)</Label>
             <div className="relative mt-1">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="pl-10 bg-muted border-border text-foreground" />
             </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <Label className="text-foreground text-sm">País</Label>
+            <Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Brasil" className="mt-1 bg-muted border-border text-foreground" />
+          </div>
+          <div>
+            <Label className="text-foreground text-sm">Estado</Label>
+            <Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="Bahia" className="mt-1 bg-muted border-border text-foreground" />
+          </div>
+          <div>
+            <Label className="text-foreground text-sm">Cidade</Label>
+            <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Salvador" className="mt-1 bg-muted border-border text-foreground" />
           </div>
         </div>
         <div>
@@ -253,6 +270,9 @@ const EditProfile = () => {
     full_name: "",
     bio: "",
     address: "",
+    country: "Brasil",
+    state: "",
+    city: "",
     sport: "",
     position: "",
     dominant_foot: "Direito",
@@ -274,6 +294,9 @@ const EditProfile = () => {
         full_name: profile.full_name || "",
         bio: profile.bio || "",
         address: profile.address || "",
+        country: profile.country || "Brasil",
+        state: profile.state || "",
+        city: profile.city || "",
         sport: profile.sport || "",
         position: profile.position || "",
         dominant_foot: profile.dominant_foot || "Direito",
@@ -293,12 +316,35 @@ const EditProfile = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+    let coordinates: { latitude: number | null; longitude: number | null } = {
+      latitude: profile?.latitude ?? null,
+      longitude: profile?.longitude ?? null,
+    };
+
+    const locationChanged = form.country !== (profile?.country || "Brasil") || form.state !== (profile?.state || "") || form.city !== (profile?.city || "");
+    if (form.country.trim() && form.city.trim() && (locationChanged || coordinates.latitude === null || coordinates.longitude === null)) {
+      const { data: geoData, error: geoError } = await supabase.functions.invoke("geocode-location", {
+        body: { country: form.country, state: form.state, city: form.city },
+      });
+      if (geoError || !geoData?.latitude || !geoData?.longitude) {
+        setSaving(false);
+        toast.error("Não foi possível localizar essa cidade. Confira país, estado e cidade.");
+        return;
+      }
+      coordinates = { latitude: geoData.latitude, longitude: geoData.longitude };
+    }
+
     const { error } = await supabase
       .from("profiles")
       .update({
         full_name: form.full_name,
         bio: form.bio,
         address: form.address,
+        country: form.country.trim() || null,
+        state: form.state.trim() || null,
+        city: form.city.trim() || null,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
         sport: form.sport,
         position: form.position,
         dominant_foot: form.dominant_foot,
