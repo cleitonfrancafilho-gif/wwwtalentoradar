@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, ChevronDown, Filter, Loader2, Map, MapPin, RotateCcw, Ruler, Users, Weight } from "lucide-react";
+import { ArrowLeft, ChevronDown, Filter, Loader2, Map as MapIcon, MapPin, RotateCcw, Ruler, Users, Weight } from "lucide-react";
 
 interface AthleteLocation {
   id: string;
@@ -109,7 +109,7 @@ const AthleteMap = () => {
   }), [athletes, country, state, city, sport, position, foot, height, weight, wingspan]);
 
   const clusters = useMemo(() => {
-    const grouped = new Map<string, LocationCluster>();
+    const grouped = new globalThis.Map<string, LocationCluster>();
     visibleAthletes.forEach((athlete) => {
       if (athlete.latitude === null || athlete.longitude === null || !athlete.country || !athlete.city) return;
       const key = `${athlete.country}|${athlete.state ?? ""}|${athlete.city}|${athlete.latitude.toFixed(3)}|${athlete.longitude.toFixed(3)}`;
@@ -142,7 +142,7 @@ const AthleteMap = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label={label("Voltar", "Back")}><ArrowLeft className="w-5 h-5" /></Button>
-            <Map className="w-5 h-5 text-primary shrink-0" />
+            <MapIcon className="w-5 h-5 text-primary shrink-0" />
             <div className="min-w-0">
               <h1 className="font-display font-bold text-lg text-foreground truncate">{label("Mapa Mundial de Talentos", "World Talent Map")}</h1>
               <p className="text-xs text-muted-foreground">{label("Atletas localizados por cidade", "Athletes located by city")}</p>

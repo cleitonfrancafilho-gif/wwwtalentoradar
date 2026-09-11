@@ -326,7 +326,7 @@ const EditProfile = () => {
       const { data: geoData, error: geoError } = await supabase.functions.invoke("geocode-location", {
         body: { country: form.country, state: form.state, city: form.city },
       });
-      if (geoError || !geoData?.latitude || !geoData?.longitude) {
+      if (geoError || !Number.isFinite(geoData?.latitude) || !Number.isFinite(geoData?.longitude)) {
         setSaving(false);
         toast.error("Não foi possível localizar essa cidade. Confira país, estado e cidade.");
         return;
