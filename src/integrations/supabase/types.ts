@@ -271,6 +271,42 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: {
+          created_at: string
+          description: string | null
+          filter: string | null
+          id: string
+          mentions: string[] | null
+          music: string | null
+          tags: string[] | null
+          user_id: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          filter?: string | null
+          id?: string
+          mentions?: string[] | null
+          music?: string | null
+          tags?: string[] | null
+          user_id: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          filter?: string | null
+          id?: string
+          mentions?: string[] | null
+          music?: string | null
+          tags?: string[] | null
+          user_id?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -412,6 +448,42 @@ export type Database = {
           sport?: string
           status?: string
           title?: string
+        }
+        Relationships: []
+      }
+      stories: {
+        Row: {
+          created_at: string
+          effect: string | null
+          expires_at: string
+          id: string
+          media_type: string
+          media_url: string
+          music_artist: string | null
+          music_name: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          effect?: string | null
+          expires_at?: string
+          id?: string
+          media_type?: string
+          media_url: string
+          music_artist?: string | null
+          music_name?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          effect?: string | null
+          expires_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          music_artist?: string | null
+          music_name?: string | null
+          user_id?: string
         }
         Relationships: []
       }
