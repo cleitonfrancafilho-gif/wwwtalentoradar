@@ -36,7 +36,7 @@ const RecentPosts = () => {
       <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-wider">Publicações recentes</p>
       {posts.map(p => (
         <div key={p.id} className="glass-card rounded-xl overflow-hidden border border-transparent">
-          <button onClick={() => navigate(`/atleta/${p.user_id}`)} className="flex items-center gap-2 p-3 w-full text-left">
+          <button onClick={() => navigate(`/perfil/${p.user_id}`)} className="flex items-center gap-2 p-3 w-full text-left">
             <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden flex items-center justify-center text-sm font-bold text-primary">
               {p.author?.avatar_url ? <img src={p.author.avatar_url} className="w-full h-full object-cover" /> : p.author?.full_name?.charAt(0) || "?"}
             </div>

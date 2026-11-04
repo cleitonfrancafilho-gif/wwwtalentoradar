@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from "react-leaflet";
@@ -75,6 +76,7 @@ const AthleteMap = () => {
   const [height, setHeight] = useState([120, 230]);
   const [weight, setWeight] = useState([35, 180]);
   const [wingspan, setWingspan] = useState([120, 250]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -96,17 +98,23 @@ const AthleteMap = () => {
   const positions = useMemo(() => unique(athletes.filter((item) => sport === ALL || item.sport === sport).map((item) => item.position)), [athletes, sport]);
 
   const visibleAthletes = useMemo(() => athletes.filter((item) => {
-    const inRange = (value: number | null, range: number[]) => value === null || (value >= range[0] && value <= range[1]);
-    return (country === ALL || item.country === country)
+    const inRange = (value: number | null, range: number[], min: number, max: number) => {
+      const untouched = range[0] === min && range[1] === max;
+      if (value === null || value === undefined) return untouched;
+      return untouched || (Number(value) >= range[0] && Number(value) <= range[1]);
+    };
+    const q = search.trim().toLowerCase();
+    return (!q || item.full_name?.toLowerCase().includes(q) || item.city?.toLowerCase().includes(q))
+      && (country === ALL || item.country === country)
       && (state === ALL || item.state === state)
       && (city === ALL || item.city === city)
       && (sport === ALL || item.sport === sport)
       && (position === ALL || item.position === position)
-      && (foot === ALL || item.dominant_foot === foot)
-      && inRange(item.height_cm, height)
-      && inRange(item.weight_kg, weight)
-      && inRange(item.wingspan_cm, wingspan);
-  }), [athletes, country, state, city, sport, position, foot, height, weight, wingspan]);
+      && (foot === ALL || item.dominant_foot?.toLowerCase() === foot.toLowerCase())
+      && inRange(item.height_cm, height, 120, 230)
+      && inRange(item.weight_kg, weight, 35, 180)
+      && inRange(item.wingspan_cm, wingspan, 120, 250);
+  }), [athletes, country, state, city, sport, position, foot, height, weight, wingspan, search]);
 
   const clusters = useMemo(() => {
     const grouped = new globalThis.Map<string, LocationCluster>();
@@ -130,7 +138,7 @@ const AthleteMap = () => {
 
   const resetFilters = () => {
     setCountry(ALL); setState(ALL); setCity(ALL); setSport(ALL); setPosition(ALL); setFoot(ALL);
-    setHeight([120, 230]); setWeight([35, 180]); setWingspan([120, 250]);
+    setHeight([120, 230]); setWeight([35, 180]); setWingspan([120, 250]); setSearch("");
   };
 
   const selectClass = "bg-muted h-9";
@@ -161,6 +169,7 @@ const AthleteMap = () => {
             <Button variant="ghost" size="sm" onClick={resetFilters} className="gap-1 text-muted-foreground"><RotateCcw className="w-3.5 h-3.5" /> {label("Limpar", "Reset")}</Button>
           </div>
           <CollapsibleContent className="border-t border-border px-3 py-3 space-y-4">
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={label("Buscar atleta por nome ou cidade...", "Search athlete by name or city...")} className="bg-muted h-9" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
               <Select value={country} onValueChange={(value) => { setCountry(value); setState(ALL); setCity(ALL); }}><SelectTrigger className={selectClass}><SelectValue placeholder={label("País", "Country")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todos os países", "All countries")}</SelectItem>{countries.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
               <Select value={state} onValueChange={(value) => { setState(value); setCity(ALL); }}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Estado", "State")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todos os estados", "All states")}</SelectItem>{states.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
