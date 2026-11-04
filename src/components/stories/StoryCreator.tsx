@@ -111,7 +111,7 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
         </div>
         {captured && (
           <Button size="sm" onClick={handlePublish} disabled={publishing} className="bg-primary text-primary-foreground font-bold">
-            {publishing ? "Enviando..." : "Publicar"
+            {publishing ? "Enviando..." : "Publicar"}
           </Button>
         )}
         {!captured && <div className="w-16" />}
