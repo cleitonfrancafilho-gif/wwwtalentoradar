@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { X, Camera, Music, Sparkles, RotateCcw, CircleDot, Zap, Type } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -29,7 +29,8 @@ interface StoryCreatorProps {
     type: CaptureMode;
     effect: string;
     music?: { name: string; artist: string };
-  }) => void;
+    file: File;
+  }) => void | Promise<void>;
 }
 
 const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
@@ -48,45 +49,34 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
     { mode: "live_photo", label: "Live Photo", icon: <Zap className="w-4 h-4" /> },
   ];
 
-  const handleCapture = () => {
-    if (captureMode === "video") {
-      if (recording) {
-        setRecording(false);
-        setCaptured(true);
-        toast.success("Vídeo gravado!");
-      } else {
-        setRecording(true);
-        toast("Gravando...");
-        setTimeout(() => {
-          setRecording(false);
-          setCaptured(true);
-          toast.success("Vídeo gravado!");
-        }, 3000);
-      }
-    } else if (captureMode === "boomerang") {
-      toast("Capturando boomerang...");
-      setTimeout(() => {
-        setCaptured(true);
-        toast.success("Boomerang criado!");
-      }, 1500);
-    } else if (captureMode === "live_photo") {
-      toast("Capturando Live Photo...");
-      setTimeout(() => {
-        setCaptured(true);
-        toast.success("Live Photo capturada!");
-      }, 1000);
-    } else {
-      setCaptured(true);
-      toast.success("Foto capturada!");
-    }
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  const handleCapture = () => fileRef.current?.click();
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    if (f.size > 200 * 1024 * 1024) { toast.error("Arquivo maior que 200MB"); return; }
+    setFile(f);
+    setPreviewUrl(URL.createObjectURL(f));
+    setCaptured(true);
   };
 
-  const handlePublish = () => {
-    onPublish({
-      type: captureMode,
-      effect: selectedEffect,
-      music: selectedMusic ? { name: selectedMusic.name, artist: selectedMusic.artist } : undefined,
-    });
+  const handlePublish = async () => {
+    if (!file) return;
+    setPublishing(true);
+    try {
+      await onPublish({
+        type: captureMode,
+        effect: selectedEffect,
+        music: selectedMusic ? { name: selectedMusic.name, artist: selectedMusic.artist } : undefined,
+        file,
+      });
+    } finally { setPublishing(false); }
   };
 
   const getEffectStyle = (): string => {
@@ -120,8 +110,8 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
           </button>
         </div>
         {captured && (
-          <Button size="sm" onClick={handlePublish} className="bg-primary text-primary-foreground font-bold">
-            Publicar
+          <Button size="sm" onClick={handlePublish} disabled={publishing} className="bg-primary text-primary-foreground font-bold">
+            {publishing ? "Enviando..." : "Publicar"}
           </Button>
         )}
         {!captured && <div className="w-16" />}
@@ -133,7 +123,14 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
           className="w-full h-full flex items-center justify-center"
           style={{ filter: getEffectStyle() }}
         >
-          {captured ? (
+          <input ref={fileRef} type="file" className="hidden" accept={captureMode === "photo" ? "image/*" : "video/*,image/*"} capture="environment" onChange={onFile} />
+          {captured && previewUrl && file ? (
+            file.type.startsWith("video") ? (
+              <video src={previewUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+            ) : (
+              <img src={previewUrl} className="w-full h-full object-cover" />
+            )
+          ) : captured ? (
             <div className="text-center">
               <div className="text-6xl mb-4">
                 {captureMode === "boomerang" ? "∞" : captureMode === "live_photo" ? "◉" : "📸"}
@@ -148,7 +145,7 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
           ) : (
             <div className="text-center">
               <Camera className="w-16 h-16 text-white/20 mx-auto mb-2" />
-              <p className="text-white/40 text-sm">Câmera</p>
+              <p className="text-white/40 text-sm">Toque no botão para abrir a câmera ou galeria</p>
             </div>
           )}
         </div>
@@ -216,7 +213,7 @@ const StoryCreator = ({ onClose, onPublish }: StoryCreatorProps) => {
           {captureModes.map(cm => (
             <button
               key={cm.mode}
-              onClick={() => { setCaptureMode(cm.mode); setCaptured(false); }}
+              onClick={() => { setCaptureMode(cm.mode); setCaptured(false); setFile(null); setPreviewUrl(null); }}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs ${captureMode === cm.mode ? "bg-primary text-primary-foreground font-bold" : "bg-white/10 text-white/70"}`}
             >
               {cm.icon}

@@ -199,7 +199,15 @@ const StoryViewer = ({ stories, initialIndex, onClose, onRepost }: StoryViewerPr
             <span className="bg-primary/30 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">✨ {slide.effect}</span>
           </div>
         )}
-        <div className="text-white/40 text-6xl">📸</div>
+        {slide.url ? (
+          /\.(mp4|mov|webm|m4v|3gp)(\?|$)/i.test(slide.url) ? (
+            <video key={slide.url} src={slide.url} autoPlay playsInline muted={muted} loop className="absolute inset-0 w-full h-full object-contain" />
+          ) : (
+            <img src={slide.url} className="absolute inset-0 w-full h-full object-contain" />
+          )
+        ) : (
+          <div className="text-white/40 text-6xl">📸</div>
+        )}
       </div>
 
       {/* Music bar */}

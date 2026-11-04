@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import BottomNav from "@/components/BottomNav";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Trophy, ThumbsUp, Crown, Medal, Loader2 } from "lucide-react";
+import { ArrowLeft, Search, Trophy, ThumbsUp, Crown, Medal, Loader2 } from "lucide-react";
 
 interface RankedAthlete {
   athlete_id: string;
@@ -26,6 +27,9 @@ const CommunityVote = () => {
   const [ranking, setRanking] = useState<RankedAthlete[]>([]);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [sportFilter, setSportFilter] = useState("todos");
+  const [allAthletes, setAllAthletes] = useState<RankedAthlete[]>([]);
 
   const getWeekStart = () => {
     const now = new Date();
@@ -37,59 +41,24 @@ const CommunityVote = () => {
   const loadRanking = async () => {
     setLoading(true);
     const weekStart = getWeekStart();
-
-    const { data: votes } = await supabase
-      .from("community_votes")
-      .select("athlete_id")
-      .eq("week_start", weekStart);
-
-    if (!votes || votes.length === 0) {
-      // Show all athletes if no votes yet
-      const { data: athletes } = await supabase
-        .from("profiles")
-        .select("id, full_name, sport, position, avatar_url")
-        .eq("profile_type", "atleta")
-        .limit(10);
-
-      setRanking((athletes || []).map(a => ({
-        athlete_id: a.id,
-        full_name: a.full_name,
-        sport: a.sport,
-        position: a.position,
-        avatar_url: a.avatar_url,
-        votes: 0,
-      })));
-      setLoading(false);
-      return;
-    }
-
-    // Count votes per athlete
+    const [{ data: votes }, { data: athletes }] = await Promise.all([
+      supabase.from("community_votes").select("athlete_id").eq("week_start", weekStart),
+      supabase.from("profiles").select("id, full_name, sport, position, avatar_url").eq("profile_type", "atleta"),
+    ]);
     const voteCounts: Record<string, number> = {};
-    votes.forEach(v => {
-      voteCounts[v.athlete_id] = (voteCounts[v.athlete_id] || 0) + 1;
-    });
-
-    const athleteIds = Object.keys(voteCounts);
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, full_name, sport, position, avatar_url")
-      .in("id", athleteIds);
-
-    const ranked = (profiles || [])
-      .map(p => ({
-        athlete_id: p.id,
-        full_name: p.full_name,
-        sport: p.sport,
-        position: p.position,
-        avatar_url: p.avatar_url,
-        votes: voteCounts[p.id] || 0,
-      }))
-      .sort((a, b) => b.votes - a.votes)
-      .slice(0, 10);
-
-    setRanking(ranked);
+    (votes || []).forEach(v => { voteCounts[v.athlete_id] = (voteCounts[v.athlete_id] || 0) + 1; });
+    const list = (athletes || []).map(a => ({
+      athlete_id: a.id, full_name: a.full_name, sport: a.sport, position: a.position, avatar_url: a.avatar_url, votes: voteCounts[a.id] || 0,
+    })).sort((a, b) => b.votes - a.votes);
+    setAllAthletes(list);
+    setRanking(list.slice(0, 10));
     setLoading(false);
   };
+
+  const sports = [...new Set(allAthletes.map(a => a.sport).filter(Boolean))] as string[];
+  const q = search.trim().toLowerCase();
+  const bySport = allAthletes.filter(a => sportFilter === "todos" || a.sport === sportFilter);
+  const shown = q ? bySport.filter(a => a.full_name?.toLowerCase().includes(q)) : bySport.slice(0, 10);
 
   useEffect(() => { loadRanking(); }, []);
 
@@ -130,7 +99,7 @@ const CommunityVote = () => {
           </button>
           <Trophy className="w-5 h-5 text-primary" />
           <span className="font-display font-bold text-lg text-foreground">
-            {lang === "en" ? "Community Vote" : "Voto da Galeria"}
+            {lang === "en" ? "Community Vote" : "Voto da Galera"}
           </span>
         </div>
       </header>
@@ -145,15 +114,27 @@ const CommunityVote = () => {
           </p>
         </div>
 
+        <div className="relative">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={lang === "en" ? "Search athlete..." : "Buscar atleta..."} className="pl-9" />
+        </div>
+        <div className="flex gap-2 overflow-x-auto scrollbar-none">
+          {["todos", ...sports].map(sp => (
+            <Button key={sp} size="sm" variant={sportFilter === sp ? "default" : "outline"} onClick={() => setSportFilter(sp)} className="shrink-0 text-xs h-8">
+              {sp === "todos" ? (lang === "en" ? "All" : "Todos") : sp}
+            </Button>
+          ))}
+        </div>
+
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
-        ) : ranking.length === 0 ? (
+        ) : shown.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
-            {lang === "en" ? "No athletes registered yet" : "Nenhum atleta cadastrado ainda"}
+            {lang === "en" ? "No athletes found" : "Nenhum atleta encontrado"}
           </div>
         ) : (
           <div className="space-y-2">
-            {ranking.map((athlete, index) => (
+            {shown.map((athlete, index) => (
               <div key={athlete.athlete_id} className={`glass-card rounded-xl p-4 flex items-center gap-3 border ${index < 3 ? "border-primary/30" : "border-transparent"}`}>
                 <div className="flex-shrink-0">{getMedal(index)}</div>
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">

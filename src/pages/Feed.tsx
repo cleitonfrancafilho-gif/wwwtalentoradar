@@ -7,6 +7,7 @@ import BottomNav from "@/components/BottomNav";
 import StoriesBar from "@/components/stories/StoriesBar";
 import LastCallBanner from "@/components/LastCallBanner";
 import SkeletonCard from "@/components/SkeletonCard";
+import RecentPosts from "@/components/RecentPosts";
 import {
   Radar, Search, Bell, MapPin, Play, Heart, MessageCircle, Calendar, Compass, Flame, TrendingUp, X,
   User, Building2, Eye, UserPlus, Users, Radio,
@@ -213,6 +214,7 @@ const Feed = () => {
 
           {/* Meu Foco */}
           <TabsContent value="foco" className="space-y-4">
+            <RecentPosts />
             {loading ? (
               <>
                 <SkeletonCard />

@@ -53,6 +53,7 @@ const TalentStudio = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recordInputRef = useRef<HTMLInputElement>(null);
 
   // Video state
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -117,6 +118,12 @@ const TalentStudio = () => {
       const filePath = `${user.id}/${Date.now()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage.from("videos").upload(filePath, videoFile, { cacheControl: "3600", upsert: false });
       if (uploadError) throw uploadError;
+      const { data: pub } = supabase.storage.from("videos").getPublicUrl(filePath);
+      const { error: postError } = await supabase.from("posts").insert({
+        user_id: user.id, video_url: pub.publicUrl, description, tags, mentions: taggedProfiles,
+        music: selectedMusic !== "none" ? selectedMusic : null, filter: activeFilter !== "none" ? activeFilter : null,
+      });
+      if (postError) throw postError;
       toast.success("Vídeo publicado com sucesso!");
       setVideoFile(null); setVideoUrl(null); setActiveTool(null);
       setDescription(""); setTags(["#Futebol", "#Sub17", "#Atacante"]);
@@ -149,6 +156,7 @@ const TalentStudio = () => {
       </header>
 
       <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={handleFileSelect} />
+      <input ref={recordInputRef} type="file" accept="video/*" capture="environment" className="hidden" onChange={handleFileSelect} />
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
         {!uploaded ? (
@@ -160,6 +168,9 @@ const TalentStudio = () => {
               <p className="font-display font-bold text-foreground">Upload de Vídeo</p>
               <p className="text-sm text-muted-foreground mt-1">MP4, MOV • Máx 200MB</p>
             </div>
+            <Button type="button" variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); recordInputRef.current?.click(); }}>
+              🎥 Gravar vídeo agora
+            </Button>
           </div>
         ) : (
           <>
