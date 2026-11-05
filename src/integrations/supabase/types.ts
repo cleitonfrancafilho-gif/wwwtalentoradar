@@ -205,6 +205,118 @@ export type Database = {
         }
         Relationships: []
       }
+      live_bans: {
+        Row: {
+          created_at: string
+          id: string
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_bans_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          kind: string
+          stream_id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          stream_id: string
+          user_id: string
+          user_name?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          stream_id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_comments_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_streams: {
+        Row: {
+          comments_enabled: boolean
+          description: string | null
+          ended_at: string | null
+          hashtags: string[]
+          host_id: string
+          id: string
+          likes: number
+          slow_mode_seconds: number
+          source: string
+          started_at: string
+          status: string
+          title: string
+        }
+        Insert: {
+          comments_enabled?: boolean
+          description?: string | null
+          ended_at?: string | null
+          hashtags?: string[]
+          host_id: string
+          id?: string
+          likes?: number
+          slow_mode_seconds?: number
+          source?: string
+          started_at?: string
+          status?: string
+          title?: string
+        }
+        Update: {
+          comments_enabled?: boolean
+          description?: string | null
+          ended_at?: string | null
+          hashtags?: string[]
+          host_id?: string
+          id?: string
+          likes?: number
+          slow_mode_seconds?: number
+          source?: string
+          started_at?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -584,6 +696,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      like_live: { Args: { _stream_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
