@@ -19,7 +19,7 @@ const SidebarDrawer = () => {
 
   const menuItems = [
     { icon: Bell, label: lang === "en" ? "Notifications" : "Notificações", path: "/notificacoes", show: true },
-    { icon: Trophy, label: lang === "en" ? "Recruitment Events" : "Eventos de Recrutamento", path: "/recrutamento", show: true },
+    { icon: Trophy, label: lang === "en" ? "Recruitment" : "Recrutamento", path: "/recrutamento", show: true },
     { icon: Users, label: lang === "en" ? "Base Management" : "Gestão de Base", path: "/gestao-base", show: isClub },
     { icon: FileDown, label: lang === "en" ? "Export Center" : "Central de Exportação", path: "/exportar", show: true },
     { icon: Star, label: lang === "en" ? "Community Vote" : "Voto da Galeria", path: "/voto-galeria", show: true },

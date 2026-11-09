@@ -41,6 +41,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .select("*")
       .eq("id", userId)
       .single();
+    if ((data as any)?.banned) {
+      await supabase.auth.signOut();
+      setProfile(null);
+      alert("Sua conta foi suspensa pela administração do TalentRadar.");
+      return null;
+    }
     setProfile(data);
     return data;
   };
