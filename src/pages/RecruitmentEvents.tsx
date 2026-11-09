@@ -53,6 +53,11 @@ const RecruitmentEvents = () => {
   const [currentAppIndex, setCurrentAppIndex] = useState(0);
   const [searchFilter, setSearchFilter] = useState("");
   const [contractFilter, setContractFilter] = useState("todos");
+  const [tab, setTab] = useState<"atletas" | "eventos">("atletas");
+  const [athletes, setAthletes] = useState<any[]>([]);
+  useEffect(() => {
+    supabase.from("profiles").select("id, full_name, avatar_url, sport, position, city, state, representation_status").eq("profile_type", "atleta").eq("banned", false).then(({ data }) => setAthletes(data ?? []));
+  }, []);
 
   // Create form
   const [formTitle, setFormTitle] = useState("");
@@ -214,6 +219,10 @@ const RecruitmentEvents = () => {
           </div>
         ) : (
           <>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <Button variant={tab === "atletas" ? "default" : "outline"} onClick={() => setTab("atletas")}><Users className="w-4 h-4 mr-1" /> {lang === "en" ? "Athletes" : "Atletas"}</Button>
+              <Button variant={tab === "eventos" ? "default" : "outline"} onClick={() => setTab("eventos")}><Calendar className="w-4 h-4 mr-1" /> {lang === "en" ? "Events" : "Peneiras"}</Button>
+            </div>
             {/* Search & Filter */}
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
@@ -230,7 +239,36 @@ const RecruitmentEvents = () => {
               </Select>
             </div>
 
-            {loading ? (
+            {tab === "atletas" ? (() => {
+              const q = searchFilter.trim().toLowerCase();
+              const list = athletes.filter((a) => {
+                const free = (a.representation_status ?? "livre") === "livre";
+                if (contractFilter === "livre" && !free) return false;
+                if (contractFilter === "contrato" && free) return false;
+                return !q || [a.full_name, a.sport, a.position, a.city, a.state].some((v) => v?.toLowerCase().includes(q));
+              });
+              return list.length === 0 ? (
+                <p className="text-center text-muted-foreground py-16">{t("Nenhum resultado", lang)}</p>
+              ) : (
+                <div className="space-y-2">
+                  {list.map((a) => {
+                    const free = (a.representation_status ?? "livre") === "livre";
+                    return (
+                      <button key={a.id} onClick={() => navigate(`/perfil/${a.id}`)} className="w-full glass-card rounded-xl p-3 flex items-center gap-3 text-left hover:border-primary/30 border border-transparent">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 overflow-hidden flex items-center justify-center shrink-0">
+                          {a.avatar_url ? <img src={a.avatar_url} alt={a.full_name} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-primary">{a.full_name?.charAt(0) || "?"}</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-display font-bold text-foreground truncate">{a.full_name || "Atleta"}</p>
+                          <p className="text-xs text-muted-foreground truncate">{[a.sport, a.position, a.city].filter(Boolean).join(" · ") || "—"}</p>
+                        </div>
+                        <Badge className={`border-0 text-xs shrink-0 ${free ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary"}`}>{free ? (lang === "en" ? "Free agent" : "Livre no mercado") : t("Com Contrato", lang)}</Badge>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })() : loading ? (
               <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
             ) : filteredEvents.length === 0 ? (
               <div className="text-center py-16">

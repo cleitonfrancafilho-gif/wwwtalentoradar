@@ -15,6 +15,13 @@
       "when": 1793911550234,
       "tag": "0001_live_streams",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794227799372,
+      "tag": "0002_admin_moderation",
+      "breakpoints": true
     }
   ]
 }

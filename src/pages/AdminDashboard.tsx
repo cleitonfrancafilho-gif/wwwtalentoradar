@@ -15,6 +15,7 @@ import { Radar, Shield, Users, Activity, AlertTriangle, Search, RotateCcw, Bell,
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import AdminContent from "@/components/admin/AdminContent";
 
 interface UserRow {
   id: string;
@@ -22,6 +23,7 @@ interface UserRow {
   email: string;
   profile_type: string;
   created_at: string;
+  banned?: boolean;
   subscription?: { status: string; plan: string } | null;
 }
 
@@ -48,7 +50,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
-    const { data, error } = await supabase.from("profiles").select("id, full_name, email, profile_type, created_at").order("created_at", { ascending: false }).limit(100);
+    const { data, error } = await supabase.from("profiles").select("id, full_name, email, profile_type, created_at, banned").order("created_at", { ascending: false }).limit(100);
     if (error) { toast.error("Erro: " + error.message); setLoadingUsers(false); return; }
     const userIds = (data || []).map((u) => u.id);
     const { data: subs } = await supabase.from("subscriptions").select("user_id, status, plan").in("user_id", userIds);
@@ -110,6 +112,10 @@ const AdminDashboard = () => {
     await supabase.from("training_checkins").delete().eq("user_id", selectedUser.id);
     await supabase.from("club_history").delete().eq("user_id", selectedUser.id);
     await supabase.from("subscriptions").delete().eq("user_id", selectedUser.id);
+    await supabase.from("posts").delete().eq("user_id", selectedUser.id);
+    await supabase.from("stories").delete().eq("user_id", selectedUser.id);
+    await supabase.from("live_streams").delete().eq("host_id", selectedUser.id);
+    await supabase.from("community_votes").delete().or(`voter_id.eq.${selectedUser.id},athlete_id.eq.${selectedUser.id}`);
     await supabase.from("user_roles").delete().eq("user_id", selectedUser.id);
     await supabase.from("profiles").delete().eq("id", selectedUser.id);
     
@@ -118,6 +124,15 @@ const AdminDashboard = () => {
     setSelectedUser(null);
     await fetchUsers();
     setGrantLoading(false);
+  };
+
+  const handleToggleBan = async (u: UserRow) => {
+    const next = !u.banned;
+    if (next && !confirm(`Banir ${u.full_name || u.email}? A pessoa será desconectada e não poderá entrar.`)) return;
+    const { error } = await supabase.from("profiles").update({ banned: next }).eq("id", u.id);
+    if (error) return toast.error("Erro: " + error.message);
+    setUsers((list) => list.map((x) => (x.id === u.id ? { ...x, banned: next } : x)));
+    toast.success(next ? "Conta banida" : "Banimento removido");
   };
 
   const handleResetPassword = async (userEmail: string) => {
@@ -225,8 +240,9 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid grid-cols-5 w-full bg-muted mb-6 h-11">
+          <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full bg-muted mb-6 h-auto gap-1">
             <TabsTrigger value="users" className="font-display text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Users className="w-3.5 h-3.5 mr-1" /> Usuários</TabsTrigger>
+            <TabsTrigger value="content" className="font-display text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Trash2 className="w-3.5 h-3.5 mr-1" /> Conteúdo</TabsTrigger>
             <TabsTrigger value="subscriptions" className="font-display text-xs data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"><Crown className="w-3.5 h-3.5 mr-1" /> Assinaturas</TabsTrigger>
             <TabsTrigger value="tools" className="font-display text-xs data-[state=active]:bg-destructive data-[state=active]:text-destructive-foreground"><AlertTriangle className="w-3.5 h-3.5 mr-1" /> Pânico</TabsTrigger>
             <TabsTrigger value="health" className="font-display text-xs data-[state=active]:bg-cyan data-[state=active]:text-primary-foreground"><Activity className="w-3.5 h-3.5 mr-1" /> Saúde</TabsTrigger>
@@ -253,6 +269,7 @@ const AdminDashboard = () => {
                         <span className="font-display font-bold text-foreground truncate">{u.full_name || "(Sem nome)"}</span>
                         <Badge className="text-xs bg-muted text-muted-foreground border-0">{u.profile_type}</Badge>
                         {getSubBadge(u.subscription)}
+                        {u.banned && <Badge className="text-xs bg-destructive/20 text-destructive border-0">Banido</Badge>}
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{u.email}</p>
                       <p className="text-[10px] text-muted-foreground">Criado: {new Date(u.created_at).toLocaleDateString("pt-BR")}</p>
@@ -262,6 +279,7 @@ const AdminDashboard = () => {
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Conceder Pro" onClick={() => { setSelectedUser(u); setGrantDialog(true); }}><Crown className="w-4 h-4 text-secondary" /></Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Resetar senha" onClick={() => handleResetPassword(u.email)}><RotateCcw className="w-4 h-4 text-muted-foreground" /></Button>
                       {u.subscription?.status === "active" && <Button size="icon" variant="ghost" className="h-8 w-8" title="Revogar Pro" onClick={() => { setSelectedUser(u); setRevokeDialog(true); }}><X className="w-4 h-4 text-destructive" /></Button>}
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title={u.banned ? "Desbanir" : "Banir conta"} onClick={() => handleToggleBan(u)}><Ban className={`w-4 h-4 ${u.banned ? "text-primary" : "text-destructive"}`} /></Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Excluir conta" onClick={() => { setSelectedUser(u); setDeleteDialog(true); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                     </div>
                   </div>
@@ -269,6 +287,8 @@ const AdminDashboard = () => {
               </div>
             )}
           </TabsContent>
+
+          <TabsContent value="content"><AdminContent /></TabsContent>
 
           <TabsContent value="subscriptions" className="space-y-4">
             <div className="glass-card rounded-xl p-6 border border-secondary/20 space-y-4">

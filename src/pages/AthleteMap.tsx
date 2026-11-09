@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ChevronDown, Filter, Loader2, Map as MapIcon, MapPin, RotateCcw, Ruler, Users, Weight } from "lucide-react";
@@ -84,7 +87,7 @@ const AthleteMap = () => {
       const { data } = await supabase
         .from("profiles")
         .select("id, full_name, avatar_url, country, state, city, latitude, longitude, sport, position, dominant_foot, height_cm, weight_kg, wingspan_cm")
-        .eq("profile_type", "atleta");
+        .eq("profile_type", "atleta").eq("banned", false);
       setAthletes((data ?? []) as AthleteLocation[]);
       setLoading(false);
     };
@@ -94,7 +97,7 @@ const AthleteMap = () => {
   const countries = useMemo(() => unique(athletes.map((item) => item.country)), [athletes]);
   const states = useMemo(() => unique(athletes.filter((item) => country === ALL || item.country === country).map((item) => item.state)), [athletes, country]);
   const cities = useMemo(() => unique(athletes.filter((item) => (country === ALL || item.country === country) && (state === ALL || item.state === state)).map((item) => item.city)), [athletes, country, state]);
-  const sports = useMemo(() => unique(athletes.map((item) => item.sport)), [athletes]);
+  const sports = useMemo(() => unique([...["Futebol", "Basquete", "Vôlei", "Futsal", "Handebol", "Tênis", "Atletismo", "Natação"], ...athletes.map((item) => item.sport)]), [athletes]);
   const positions = useMemo(() => unique(athletes.filter((item) => sport === ALL || item.sport === sport).map((item) => item.position)), [athletes, sport]);
 
   const visibleAthletes = useMemo(() => athletes.filter((item) => {
@@ -171,10 +174,10 @@ const AthleteMap = () => {
           <CollapsibleContent className="border-t border-border px-3 py-3 space-y-4">
             <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={label("Buscar atleta por nome ou cidade...", "Search athlete by name or city...")} className="bg-muted h-9" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-              <Select value={country} onValueChange={(value) => { setCountry(value); setState(ALL); setCity(ALL); }}><SelectTrigger className={selectClass}><SelectValue placeholder={label("País", "Country")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todos os países", "All countries")}</SelectItem>{countries.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
-              <Select value={state} onValueChange={(value) => { setState(value); setCity(ALL); }}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Estado", "State")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todos os estados", "All states")}</SelectItem>{states.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
-              <Select value={city} onValueChange={setCity}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Cidade", "City")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todas as cidades", "All cities")}</SelectItem>{cities.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
-              <Select value={sport} onValueChange={(value) => { setSport(value); setPosition(ALL); }}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Modalidade", "Sport")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todas modalidades", "All sports")}</SelectItem>{sports.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
+              <SearchSelect value={country} onChange={(value) => { setCountry(value); setState(ALL); setCity(ALL); }} options={countries} placeholder={label("País", "Country")} allLabel={label("Todos os países", "All countries")} searchLabel={label("Pesquisar...", "Search...")} />
+              <SearchSelect value={state} onChange={(value) => { setState(value); setCity(ALL); }} options={states} placeholder={label("Estado", "State")} allLabel={label("Todos os estados", "All states")} searchLabel={label("Pesquisar...", "Search...")} />
+              <SearchSelect value={city} onChange={(value) => { setCity(value); }} options={cities} placeholder={label("Cidade", "City")} allLabel={label("Todas as cidades", "All cities")} searchLabel={label("Pesquisar...", "Search...")} />
+              <SearchSelect value={sport} onChange={(value) => { setSport(value); setPosition(ALL); }} options={sports} placeholder={label("Modalidade", "Sport")} allLabel={label("Todas modalidades", "All sports")} searchLabel={label("Pesquisar...", "Search...")} />
               <Select value={position} onValueChange={setPosition}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Posição", "Position")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Todas posições", "All positions")}</SelectItem>{positions.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
               <Select value={foot} onValueChange={setFoot}><SelectTrigger className={selectClass}><SelectValue placeholder={label("Pé dominante", "Dominant foot")} /></SelectTrigger><SelectContent><SelectItem value={ALL}>{label("Qualquer pé", "Any foot")}</SelectItem>{["Direito", "Esquerdo", "Ambos"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select>
             </div>
@@ -205,9 +208,54 @@ const AthleteMap = () => {
           </MapContainer>
           {!loading && clusters.length === 0 && <div className="pointer-events-none absolute left-1/2 top-4 z-10 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md rounded-md border border-border bg-card/95 px-4 py-3 text-center shadow-lg"><MapPin className="w-5 h-5 text-primary mx-auto mb-1" /><p className="text-sm font-semibold text-foreground">{label("Nenhum atleta localizado", "No located athletes")}</p><p className="text-xs text-muted-foreground">{label("Ajuste os filtros ou peça aos atletas para preencher país, estado e cidade no perfil.", "Adjust filters or ask athletes to complete country, state and city in their profile.")}</p></div>}
         </div>
+
+        <section className="space-y-2">
+          <h2 className="font-display font-bold text-foreground text-sm">{label("Atletas encontrados", "Athletes found")} ({visibleAthletes.length})</h2>
+          {!loading && visibleAthletes.length === 0 && <p className="text-sm text-muted-foreground text-center py-6">{label("Nenhum atleta corresponde aos filtros.", "No athletes match the filters.")}</p>}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {visibleAthletes.map((a) => (
+              <button key={a.id} onClick={() => navigate(`/perfil/${a.id}`)} className="flex items-center gap-3 rounded-md border border-border bg-card p-3 text-left hover:border-primary/40 transition-colors">
+                <div className="w-12 h-12 rounded-full bg-primary/10 overflow-hidden flex items-center justify-center shrink-0">
+                  {a.avatar_url ? <img src={a.avatar_url} alt={a.full_name} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-primary">{a.full_name?.charAt(0) || "?"}</span>}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-foreground truncate">{a.full_name || label("Atleta", "Athlete")}</p>
+                  <p className="text-xs text-muted-foreground truncate">{[a.sport, a.position].filter(Boolean).join(" · ") || "—"}</p>
+                  <p className="text-[11px] text-muted-foreground truncate">{[a.city, a.state, a.country].filter(Boolean).join(", ") || label("Local não informado", "No location")}{a.height_cm ? ` · ${a.height_cm}cm` : ""}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
       </main>
       <BottomNav />
     </div>
+  );
+};
+
+const SearchSelect = ({ value, onChange, options, placeholder, allLabel, searchLabel }: { value: string; onChange: (v: string) => void; options: string[]; placeholder: string; allLabel: string; searchLabel: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="bg-muted h-9 justify-between font-normal px-3"><span className="truncate">{value === ALL ? placeholder : value}</span><ChevronDown className="w-4 h-4 opacity-50 shrink-0" /></Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0 w-56" align="start">
+        <Command>
+          <CommandInput placeholder={searchLabel} />
+          <CommandList>
+            <CommandEmpty>—</CommandEmpty>
+            <CommandGroup>
+              {[ALL, ...options].map((opt) => (
+                <CommandItem key={opt} value={opt === ALL ? allLabel : opt} onSelect={() => { onChange(opt); setOpen(false); }}>
+                  <Check className={`w-4 h-4 mr-2 ${value === opt ? "opacity-100" : "opacity-0"}`} />{opt === ALL ? allLabel : opt}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
 

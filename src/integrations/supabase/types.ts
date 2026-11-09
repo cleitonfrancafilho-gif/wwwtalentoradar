@@ -425,6 +425,7 @@ export type Database = {
           anonymous_mode: boolean | null
           area_of_operation: string | null
           avatar_url: string | null
+          banned: boolean
           bio: string | null
           birth_date: string | null
           city: string | null
@@ -457,6 +458,7 @@ export type Database = {
           anonymous_mode?: boolean | null
           area_of_operation?: string | null
           avatar_url?: string | null
+          banned?: boolean
           bio?: string | null
           birth_date?: string | null
           city?: string | null
@@ -489,6 +491,7 @@ export type Database = {
           anonymous_mode?: boolean | null
           area_of_operation?: string | null
           avatar_url?: string | null
+          banned?: boolean
           bio?: string | null
           birth_date?: string | null
           city?: string | null
