@@ -43,7 +43,7 @@ const CommunityVote = () => {
     const weekStart = getWeekStart();
     const [{ data: votes }, { data: athletes }] = await Promise.all([
       supabase.from("community_votes").select("athlete_id").eq("week_start", weekStart),
-      supabase.from("profiles").select("id, full_name, sport, position, avatar_url").eq("profile_type", "atleta"),
+      supabase.from("profiles").select("id, full_name, sport, position, avatar_url").eq("profile_type", "atleta").eq("banned", false),
     ]);
     const voteCounts: Record<string, number> = {};
     (votes || []).forEach(v => { voteCounts[v.athlete_id] = (voteCounts[v.athlete_id] || 0) + 1; });
@@ -55,7 +55,8 @@ const CommunityVote = () => {
     setLoading(false);
   };
 
-  const sports = [...new Set(allAthletes.map(a => a.sport).filter(Boolean))] as string[];
+  const BASE_SPORTS = ["Futebol", "Basquete", "Vôlei", "Futsal", "Handebol", "Tênis", "Atletismo", "Natação", "Beach Tennis", "Lutas"];
+  const sports = [...new Set([...BASE_SPORTS, ...(allAthletes.map(a => a.sport).filter(Boolean) as string[])])];
   const q = search.trim().toLowerCase();
   const bySport = allAthletes.filter(a => sportFilter === "todos" || a.sport === sportFilter);
   const shown = q ? bySport.filter(a => a.full_name?.toLowerCase().includes(q)) : bySport.slice(0, 10);
@@ -137,15 +138,15 @@ const CommunityVote = () => {
             {shown.map((athlete, index) => (
               <div key={athlete.athlete_id} className={`glass-card rounded-xl p-4 flex items-center gap-3 border ${index < 3 ? "border-primary/30" : "border-transparent"}`}>
                 <div className="flex-shrink-0">{getMedal(index)}</div>
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <button onClick={() => navigate(`/perfil/${athlete.athlete_id}`)} className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {athlete.avatar_url ? (
-                    <img src={athlete.avatar_url} className="w-full h-full rounded-full object-cover" />
+                    <img src={athlete.avatar_url} alt={athlete.full_name} className="w-full h-full rounded-full object-cover" />
                   ) : (
                     <span className="font-display font-bold text-primary">{athlete.full_name?.charAt(0)}</span>
                   )}
-                </div>
+                </button>
                 <div className="flex-1 min-w-0">
-                  <p className="font-display font-bold text-foreground text-sm truncate">{athlete.full_name}</p>
+                  <button onClick={() => navigate(`/perfil/${athlete.athlete_id}`)} className="font-display font-bold text-foreground text-sm truncate hover:underline hover:text-primary block max-w-full text-left">{athlete.full_name}</button>
                   <div className="flex items-center gap-1">
                     <Badge className="bg-primary/20 text-primary border-0 text-[10px]">{athlete.sport || "—"}</Badge>
                     <Badge className="bg-muted text-muted-foreground border-0 text-[10px]">{athlete.position || "—"}</Badge>
