@@ -105,7 +105,7 @@ const ScoutEvaluation = () => {
         <div className="text-center">
           <ClipboardList className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
           <p className="text-muted-foreground">{lang === "en" ? "Only scouts can access this tool" : "Apenas olheiros podem acessar esta ferramenta"}</p>
-          <Button variant="outline" className="mt-4" onClick={() => navigate(-1)}>
+          <Button variant="outline" className="mt-4" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))}>
             <ArrowLeft className="w-4 h-4 mr-2" /> {lang === "en" ? "Back" : "Voltar"}
           </Button>
         </div>
@@ -118,7 +118,7 @@ const ScoutEvaluation = () => {
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <ClipboardList className="w-5 h-5 text-primary" />

@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Radar, Users, Shield, MapPin, LogIn, UserPlus } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  useEffect(() => { if (user) navigate("/feed", { replace: true }); }, [user]);
 
   const features = [
     { icon: Radar, title: "DVD Digital", desc: "Crie seu portfólio esportivo com vídeos, estatísticas e conquistas." },

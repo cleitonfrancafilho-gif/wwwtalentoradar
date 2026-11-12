@@ -152,7 +152,7 @@ const AthleteMap = () => {
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label={label("Voltar", "Back")}><ArrowLeft className="w-5 h-5" /></Button>
+            <Button variant="ghost" size="icon" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} aria-label={label("Voltar", "Back")}><ArrowLeft className="w-5 h-5" /></Button>
             <MapIcon className="w-5 h-5 text-primary shrink-0" />
             <div className="min-w-0">
               <h1 className="font-display font-bold text-lg text-foreground truncate">{label("Mapa Mundial de Talentos", "World Talent Map")}</h1>

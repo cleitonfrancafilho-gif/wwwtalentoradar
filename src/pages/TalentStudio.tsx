@@ -54,6 +54,7 @@ const TalentStudio = () => {
   const { user, profile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recordInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   // Video state
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -89,7 +90,7 @@ const TalentStudio = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 200 * 1024 * 1024) { toast.error("Máximo 200MB."); return; }
-    if (!file.type.startsWith("video/")) { toast.error("Selecione um vídeo."); return; }
+    if (!file.type.startsWith("video/") && !file.type.startsWith("image/")) { toast.error("Selecione uma foto ou vídeo."); return; }
     setVideoFile(file);
     setVideoUrl(URL.createObjectURL(file));
   };
@@ -121,10 +122,10 @@ const TalentStudio = () => {
       const { data: pub } = supabase.storage.from("videos").getPublicUrl(filePath);
       const { error: postError } = await supabase.from("posts").insert({
         user_id: user.id, video_url: pub.publicUrl, description, tags, mentions: taggedProfiles,
-        music: selectedMusic !== "none" ? selectedMusic : null, filter: activeFilter !== "none" ? activeFilter : null,
+        media_type: isImage ? "image" : "video", music: selectedMusic !== "none" ? selectedMusic : null, filter: activeFilter !== "none" ? activeFilter : null,
       });
       if (postError) throw postError;
-      toast.success("Vídeo publicado com sucesso!");
+      toast.success(isImage ? "Foto publicada com sucesso!" : "Vídeo publicado com sucesso!");
       setVideoFile(null); setVideoUrl(null); setActiveTool(null);
       setDescription(""); setTags(["#Futebol", "#Sub17", "#Atacante"]);
       setTaggedProfiles([]); setSelectedMusic("none"); setIndicatorEnabled(false);
@@ -135,13 +136,14 @@ const TalentStudio = () => {
   };
 
   const uploaded = !!videoFile;
+  const isImage = !!videoFile?.type.startsWith("image/");
   const currentFilter = filters.find(f => f.id === activeFilter)?.css || "";
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
@@ -155,7 +157,8 @@ const TalentStudio = () => {
         </div>
       </header>
 
-      <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={handleFileSelect} />
+      <input ref={fileInputRef} type="file" accept="video/*,image/*" className="hidden" onChange={handleFileSelect} />
+      <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelect} />
       <input ref={recordInputRef} type="file" accept="video/*" capture="environment" className="hidden" onChange={handleFileSelect} />
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
@@ -165,11 +168,14 @@ const TalentStudio = () => {
               <Upload className="w-8 h-8 text-primary" />
             </div>
             <div className="text-center">
-              <p className="font-display font-bold text-foreground">Upload de Vídeo</p>
-              <p className="text-sm text-muted-foreground mt-1">MP4, MOV • Máx 200MB</p>
+              <p className="font-display font-bold text-foreground">Publicar Foto ou Vídeo</p>
+              <p className="text-sm text-muted-foreground mt-1">JPG, PNG, MP4, MOV • Máx 200MB</p>
             </div>
             <Button type="button" variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); recordInputRef.current?.click(); }}>
               🎥 Gravar vídeo agora
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); photoInputRef.current?.click(); }}>
+              📷 Tirar foto agora
             </Button>
           </div>
         ) : (
@@ -177,7 +183,7 @@ const TalentStudio = () => {
             {/* Video preview with overlays */}
             <div className="relative glass-card rounded-2xl aspect-video overflow-hidden" style={{ filter: currentFilter }}>
               {videoUrl ? (
-                <video src={videoUrl} controls className="w-full h-full object-cover" />
+                isImage ? <img src={videoUrl} alt="Pré-visualização" className="w-full h-full object-cover" /> : <video src={videoUrl} controls className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-muted flex items-center justify-center">
                   <Play className="w-14 h-14 text-primary opacity-60" />
