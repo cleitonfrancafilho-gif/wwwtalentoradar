@@ -36,11 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [adminClaimAttempted, setAdminClaimAttempted] = useState(false);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
+    const { data: rows } = await supabase.rpc("get_my_profile");
+    const data = (rows as any[] | null)?.[0] ?? null;
     if ((data as any)?.banned) {
       await supabase.auth.signOut();
       setProfile(null);
