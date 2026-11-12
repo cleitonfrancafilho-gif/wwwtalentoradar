@@ -691,6 +691,59 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_profiles: {
+        Args: never
+        Returns: {
+          banned: boolean
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          profile_type: Database["public"]["Enums"]["profile_type"]
+        }[]
+      }
+      get_my_profile: {
+        Args: never
+        Returns: {
+          address: string | null
+          anonymous_mode: boolean | null
+          area_of_operation: string | null
+          avatar_url: string | null
+          banned: boolean
+          bio: string | null
+          birth_date: string | null
+          city: string | null
+          cnpj: string | null
+          country: string | null
+          cpf: string | null
+          created_at: string
+          dominant_foot: string | null
+          email: string
+          full_name: string
+          height_cm: number | null
+          id: string
+          latitude: number | null
+          legal_representative: string | null
+          longitude: number | null
+          phone: string | null
+          position: string | null
+          professional_link: string | null
+          profile_type: Database["public"]["Enums"]["profile_type"]
+          registration_number: string | null
+          representation_status: string | null
+          sport: string | null
+          state: string | null
+          updated_at: string
+          weight_kg: number | null
+          wingspan_cm: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_pro_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
