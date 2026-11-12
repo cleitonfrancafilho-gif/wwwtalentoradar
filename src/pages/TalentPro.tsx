@@ -50,7 +50,7 @@ const TalentPro = () => {
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">

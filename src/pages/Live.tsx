@@ -283,7 +283,7 @@ const Live = () => {
       <div className="min-h-screen bg-background pb-20">
         <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
           <div className="max-w-2xl mx-auto flex items-center justify-between">
-            <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-5 h-5" /></button>
+            <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-5 h-5" /></button>
             <div className="flex items-center gap-2"><Radio className="w-5 h-5 text-destructive" /><span className="font-display font-bold text-lg text-foreground">Lives</span></div>
             <Button size="sm" variant="destructive" onClick={() => setMode("setup")} className="gap-1"><Radio className="w-3.5 h-3.5" /> Iniciar</Button>
           </div>

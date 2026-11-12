@@ -29,6 +29,13 @@
       "when": 1794482100543,
       "tag": "0003_tighten_select_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794482675548,
+      "tag": "0004_social_notifications_challenges",
+      "breakpoints": true
     }
   ]
 }

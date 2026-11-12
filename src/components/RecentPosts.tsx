@@ -6,6 +6,7 @@ interface PostItem {
   id: string;
   user_id: string;
   video_url: string;
+  media_type?: string;
   description: string | null;
   tags: string[] | null;
   created_at: string;
@@ -18,7 +19,7 @@ const RecentPosts = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("posts").select("id, user_id, video_url, description, tags, created_at").order("created_at", { ascending: false }).limit(20);
+      const { data } = await supabase.from("posts").select("id, user_id, video_url, media_type, description, tags, created_at").order("created_at", { ascending: false }).limit(20);
       const rows = (data ?? []) as PostItem[];
       const ids = [...new Set(rows.map(r => r.user_id))];
       if (ids.length) {
@@ -43,7 +44,7 @@ const RecentPosts = () => {
             <span className="text-sm font-bold text-foreground">{p.author?.full_name || "Atleta"}</span>
             <span className="ml-auto text-[10px] text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</span>
           </button>
-          <video src={p.video_url} controls playsInline preload="metadata" className="w-full aspect-video bg-muted" />
+          {p.media_type === "image" ? <img src={p.video_url} alt={p.description || "Publicação"} loading="lazy" className="w-full max-h-[600px] object-cover bg-muted" /> : <video src={p.video_url} controls playsInline preload="metadata" className="w-full aspect-video bg-muted" />}
           {(p.description || p.tags?.length) && (
             <div className="p-3 text-xs space-y-1">
               {p.description && <p className="text-foreground">{p.description}</p>}

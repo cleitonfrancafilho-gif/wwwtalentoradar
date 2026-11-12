@@ -205,6 +205,27 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       live_bans: {
         Row: {
           created_at: string
@@ -389,6 +410,7 @@ export type Database = {
           description: string | null
           filter: string | null
           id: string
+          media_type: string
           mentions: string[] | null
           music: string | null
           tags: string[] | null
@@ -400,6 +422,7 @@ export type Database = {
           description?: string | null
           filter?: string | null
           id?: string
+          media_type?: string
           mentions?: string[] | null
           music?: string | null
           tags?: string[] | null
@@ -411,11 +434,33 @@ export type Database = {
           description?: string | null
           filter?: string | null
           id?: string
+          media_type?: string
           mentions?: string[] | null
           music?: string | null
           tags?: string[] | null
           user_id?: string
           video_url?: string
+        }
+        Relationships: []
+      }
+      profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          viewer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          viewer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          viewer_id?: string
         }
         Relationships: []
       }
@@ -686,11 +731,76 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_challenges: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          ends_at: string
+          id: string
+          level: string
+          starts_at: string
+          title: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at: string
+          id?: string
+          level?: string
+          starts_at?: string
+          title: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string
+          id?: string
+          level?: string
+          starts_at?: string
+          title?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      weekly_winner_announcements: {
+        Row: {
+          athlete_id: string | null
+          created_at: string
+          week_start: string
+        }
+        Insert: {
+          athlete_id?: string | null
+          created_at?: string
+          week_start: string
+        }
+        Update: {
+          athlete_id?: string | null
+          created_at?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      _display_name: { Args: { _id: string }; Returns: string }
+      _notify: {
+        Args: {
+          _body: string
+          _title: string
+          _type: string
+          _url: string
+          _user: string
+        }
+        Returns: undefined
+      }
       admin_list_profiles: {
         Args: never
         Returns: {
@@ -753,6 +863,7 @@ export type Database = {
         Returns: boolean
       }
       like_live: { Args: { _stream_id: string }; Returns: number }
+      run_notification_jobs: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

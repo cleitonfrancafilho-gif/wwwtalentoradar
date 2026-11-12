@@ -26,7 +26,7 @@ interface NotificationData {
 const typeIcons: Record<string, typeof Bell> = {
   follow: UserPlus, like: Heart, view: Eye, comment: MessageCircle,
   event: Calendar, achievement: Trophy, top5: Star, favorite: Flag,
-  recruitment: Calendar, admin_broadcast: Bell,
+  recruitment: Calendar, admin_broadcast: Bell, recommendation: Star,
 };
 
 const typeColors: Record<string, string> = {
@@ -63,7 +63,7 @@ const Notifications = () => {
   useEffect(() => {
     if (!user) return;
     const channel = supabase
-      .channel("notif-realtime")
+      .channel(`notif-page-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", {
         event: "INSERT",
         schema: "public",
@@ -71,7 +71,6 @@ const Notifications = () => {
         filter: `user_id=eq.${user.id}`,
       }, (payload) => {
         setNotifications(prev => [payload.new as NotificationData, ...prev]);
-        toast(payload.new.title, { description: payload.new.body });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -127,7 +126,7 @@ const Notifications = () => {
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">

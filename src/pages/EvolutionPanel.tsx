@@ -91,7 +91,7 @@ const EvolutionPanel = () => {
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-50 glass border-b border-border/50 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/feed"))} className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="font-display font-bold text-foreground text-lg">Painel de Evolução</h1>
