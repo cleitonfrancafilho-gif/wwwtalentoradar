@@ -50,7 +50,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
-    const { data, error } = await supabase.from("profiles").select("id, full_name, email, profile_type, created_at, banned").order("created_at", { ascending: false }).limit(100);
+    const { data, error } = await supabase.rpc("admin_list_profiles");
     if (error) { toast.error("Erro: " + error.message); setLoadingUsers(false); return; }
     const userIds = (data || []).map((u) => u.id);
     const { data: subs } = await supabase.from("subscriptions").select("user_id, status, plan").in("user_id", userIds);
